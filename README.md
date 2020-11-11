@@ -19,3 +19,5 @@ Please don't get the source code and run the bot by yourself. Please [invite](ht
 
 ### Info for Pull Requests:
 * You can always create one and if I think thats better then my code, I would put it in the source code and might put the Discord name of the user in special thanks that created the request.
+
+If you have any questions about the bots code, just DM me on Discord. MakufonSkifto#1414
