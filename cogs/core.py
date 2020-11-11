@@ -9,7 +9,7 @@ import time_utils
 start_time = datetime.datetime.utcnow()
 
 
-x = 0
+x = 1
 if x == 0:
     DIR = os.path.dirname(__file__)
     db = sqlite3.connect(os.path.join(DIR, "C:/Users/emirs/PycharmProjects/mobot/tags.db"))
@@ -129,10 +129,26 @@ class core(commands.Cog):
                         db.commit()
                         await ctx.send(f":white_check_mark: Created tag with the name `{name}`")
 
-    @commands.command()
+    @commands.command(aliases=["t", "taq"])
     async def tag(self, ctx, tag=None):
         if ctx.guild.id in epic_servers:
-            await ctx.send("It's `h.taq` you fucking g-spy")
+            if tag is None:
+                embed = discord.Embed(
+                    title=":x: Command Raised an Exception!",
+                    color=0xff0000
+                )
+                embed.add_field(name="Error:",
+                                value=f"```taq is a required argument that is missing```")
+                embed.set_footer(text=f"MissingRequiredArgument | Occurred in: {ctx.command}")
+                await ctx.send(embed=embed)
+            else:
+                sql.execute(f'SELECT tags_content FROM "773249498104201228" WHERE tags_name= "{tag}"')
+                final = sql.fetchone()
+
+                if final:
+                    await ctx.send(final[0])
+                else:
+                    await ctx.send(f"Taq named `{tag}` doesn't exist!")
         else:
             if tag is None:
                 embed = discord.Embed(
@@ -151,29 +167,6 @@ class core(commands.Cog):
                     await ctx.send(final[0])
                 else:
                     await ctx.send(f"Tag named `{tag}` doesn't exist!")
-
-    @commands.command(aliases=["t"])
-    async def taq(self, ctx, taq=None):
-        if ctx.guild.id in epic_servers:
-            if taq is None:
-                embed = discord.Embed(
-                    title=":x: Command Raised an Exception!",
-                    color=0xff0000
-                )
-                embed.add_field(name="Error:",
-                                value=f"```taq is a required argument that is missing```")
-                embed.set_footer(text=f"MissingRequiredArgument | Occurred in: {ctx.command}")
-                await ctx.send(embed=embed)
-            else:
-                sql.execute(f'SELECT tags_content FROM "773249498104201228" WHERE tags_name= "{taq}"')
-                final = sql.fetchone()
-
-                if final:
-                    await ctx.send(final[0])
-                else:
-                    await ctx.send(f"Taq named `{taq}` doesn't exist!")
-        else:
-            return
 
     @commands.has_permissions(manage_messages=True)
     @commands.command(aliases=["d"])
