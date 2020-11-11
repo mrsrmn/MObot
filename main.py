@@ -1,5 +1,12 @@
 from discord.ext import commands
 import discord
+from pathlib import Path
+from dotenv import load_dotenv
+import os
+
+env_path = Path(".") / ".env"
+load_dotenv(dotenv_path=env_path)
+TOKEN = os.getenv("TOKEN")
 
 intents = discord.Intents.default()
 intents.members = True
@@ -9,4 +16,4 @@ client.remove_command("help")
 
 client.load_extension("cogs.core")
 
-client.run("NzczODM5NDA3NTk2OTYxODAz.X6PEHA.nFjMaVNHsTfFXLTuU7DrCsyqoFg")
+client.run(TOKEN)

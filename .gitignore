@@ -17,3 +17,4 @@ LICENSE
 .idea/modules.xml
 .idea/sqldialects.xml
 .idea/vcs.xml
+__pycache__/
