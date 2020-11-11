@@ -18,6 +18,7 @@ elif x == 1:
 
 sql.execute('create table if not exists tags_list("id" integer not null,'
             '"tags_name" text not null, "tags_content" text not null, "tags_date" integer not null)')
+
 sql.execute(f'SELECT tags_name FROM tags_list')
 final1 = sql.fetchall()
 final2 = len(final1)
@@ -75,6 +76,7 @@ class core(commands.Cog):
         embed.add_field(name="listall", value="Qives a list of the taqs (all of them)")
         embed.add_field(name="pinq", value="Qives the latency")
         embed.add_field(name="info <taq>", value="Qives info about a taq")
+        embed.add_field(name="about", value="About the bot")
         embed.set_thumbnail(url="https://cdn.discordapp.com/avatars/7738394075969618"
                                 "03/c32e9d106e4204ca6e68f2ec5b959c32.webp?size=1024")
         await ctx.send(embed=embed)
@@ -194,12 +196,10 @@ class core(commands.Cog):
     async def listall(self, ctx):
         sql.execute(f'SELECT tags_name FROM tags_list')
         final = sql.fetchall()
-        final = str(final)
-        sql.execute(f'SELECT tags_name FROM tags_list')
-        finalthe = sql.fetchall()
-        finalcount = len(finalthe)
+        finalstr = str(final)
+        finalcount = len(final)
 
-        h = final.replace("('", "")
+        h = finalstr.replace("('", "")
         h = h.replace("[", "")
         h = h.replace("',)]", "")
         h = h.replace("',),", "\n")
@@ -267,6 +267,23 @@ class core(commands.Cog):
                 await ctx.send(repr(e))
         else:
             await ctx.send("you cant use that :rage:")
+
+    @commands.command()
+    async def about(self, ctx):
+        sql.execute(f'SELECT tags_name FROM tags_list')
+        final = sql.fetchall()
+        finalcount = len(final)
+
+        embed = discord.Embed(
+            title="MOBot Info :flushed:",
+            description="MO is an epic bot made for h2.1 :sunglasses:",
+            color=discord.Colour.purple()
+        )
+        embed.add_field(name="Pinq:", value=f"{round(self.client.latency * 1000)}ms")
+        embed.add_field(name="Command Count:", value=f"{len(self.client.commands)}")
+        embed.add_field(name="Made by:", value="MakufonSkifto#1414 :sunglasses:")
+        embed.add_field(name="Taq Count:", value=f"{finalcount}")
+        await ctx.send(embed=embed)
 
 
 def setup(client):
