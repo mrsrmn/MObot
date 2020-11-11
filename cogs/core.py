@@ -60,13 +60,12 @@ class core(commands.Cog):
             embed.set_footer(text=f"{error.__class__.__name__} | Occurred in: {ctx.command}")
             await ctx.send(embed=embed)
 
-
     @commands.Cog.listener()
     async def on_ready(self):
         print("Bot is ready")
         self.client.loop.create_task(self.status_task())
 
-    @commands.command(aliases=["help","h"])
+    @commands.command(aliases=["help", "h"])
     async def _help(self, ctx):
         embed = discord.Embed(
             title="MOBot Help",
@@ -115,7 +114,7 @@ class core(commands.Cog):
                     await ctx.send(embed=embed)
                 else:
                     sql.execute('insert into tags_list(id, tags_name, tags_content, tags_date) values(?,?,?,?)',
-                            (ctx.author.id, name, content, now))
+                                (ctx.author.id, name, content, now))
                     db.commit()
                     await ctx.send(f":white_check_mark: Created taq with the name `{name}`")
 
@@ -168,7 +167,8 @@ class core(commands.Cog):
                 if thinq.lower() == "content":
                     if attachment and content is None:
                         sql.execute(
-                            f'UPDATE tags_list set tags_content = "{ctx.message.attachments[0].url}" WHERE tags_name = "{taq}"')
+                            f'UPDATE tags_list set tags_content = "{ctx.message.attachments[0].url}" '
+                            f'WHERE tags_name = "{taq}"')
                         db.commit()
                         await ctx.send(f"Tag named `{taq}` edited successfully")
                     else:
@@ -200,7 +200,8 @@ class core(commands.Cog):
                         db.commit()
                         await ctx.send(f"Tag named `{taq}` edited successfully")
                 else:
-                    await ctx.send(":x: That is not the correct formatting of the command! Do `h.help` for detailed help of the command.")
+                    await ctx.send(":x: That is not the correct formatting of the"
+                                   " command! Do `h.help` for detailed help of the command.")
             else:
                 await ctx.send(":x: You can't edit that tag!")
         else:
@@ -212,7 +213,7 @@ class core(commands.Cog):
         sql.execute(f'SELECT tags_name FROM tags_list WHERE id = {user}')
         final = sql.fetchall()
         finallist = str(final)
-        final2 = len(final)
+        finalc = len(final)
 
         h = finallist.replace("('", "")
         h = h.replace("[", "")
@@ -225,7 +226,7 @@ class core(commands.Cog):
                 colour=discord.Colour.purple()
             )
             embed.add_field(name="**Taqs:**", value="You don't own any lol")
-            embed.set_footer(text=f"Taq Count: {final2}")
+            embed.set_footer(text=f"Taq Count: {finalc}")
             await ctx.send(embed=embed)
         else:
             embed = discord.Embed(
@@ -233,7 +234,7 @@ class core(commands.Cog):
                 colour=discord.Colour.purple()
             )
             embed.add_field(name="**Taqs:**", value=h)
-            embed.set_footer(text=f"Taq Count: {final2}")
+            embed.set_footer(text=f"Taq Count: {finalc}")
             await ctx.send(embed=embed)
 
     @commands.command(aliases=["la"])
