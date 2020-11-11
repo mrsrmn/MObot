@@ -9,7 +9,6 @@ import time_utils
 
 start_time = datetime.datetime.utcnow()
 
-
 x = 0
 if x == 0:
     DIR = os.path.dirname(__file__)
@@ -76,7 +75,7 @@ class core(commands.Cog):
         embed.add_field(name="taq <taq>", value="Shows you the specified taq")
         embed.add_field(name="create <name> <content>", value="Creates a taq")
         embed.add_field(name="delete <taq>", value="Deletes a taq")
-        embed.add_field(name="edit <taq> <content>", value="Edits a taq you own")
+        embed.add_field(name="edit <name/content> <taq> <content>", value="Edits a taq you own")
         embed.add_field(name="list", value="Qives a list of the taqs you've created")
         embed.add_field(name="listall", value="Qives a list of the taqs (all of them)")
         embed.add_field(name="pinq", value="Qives the latency")
@@ -105,10 +104,20 @@ class core(commands.Cog):
                 db.commit()
                 await ctx.send(f":white_check_mark: Created taq with the name `{name}`")
             else:
-                sql.execute('insert into tags_list(id, tags_name, tags_content, tags_date) values(?,?,?,?)',
+                if content is None:
+                    embed = discord.Embed(
+                        title=":x: Command Raised an Exception!",
+                        color=0xff0000
+                    )
+                    embed.add_field(name="Error:",
+                                    value=f"```content is a required argument that is missing```")
+                    embed.set_footer(text=f"MissingRequiredArgument | Occurred in: {ctx.command}")
+                    await ctx.send(embed=embed)
+                else:
+                    sql.execute('insert into tags_list(id, tags_name, tags_content, tags_date) values(?,?,?,?)',
                             (ctx.author.id, name, content, now))
-                db.commit()
-                await ctx.send(f":white_check_mark: Created taq with the name `{name}`")
+                    db.commit()
+                    await ctx.send(f":white_check_mark: Created taq with the name `{name}`")
 
     @commands.command(aliases=["t"])
     async def taq(self, ctx, taq):
@@ -145,7 +154,7 @@ class core(commands.Cog):
             await ctx.send(f"Taq named `{taq}` doesn't exist!")
 
     @commands.command(aliases=["e"])
-    async def edit(self, ctx, taq, *, content=None):
+    async def edit(self, ctx, thinq, taq, *, content=None):
         attachment = ctx.message.attachments
         user = ctx.author.id
         sql.execute(f'SELECT tags_content FROM tags_list WHERE tags_name= "{taq}"')
@@ -156,14 +165,42 @@ class core(commands.Cog):
 
         if final:
             if id1[0] == user or ctx.author.id in admin_ids:
-                if attachment and content is None:
-                    sql.execute(f'UPDATE tags_list set tags_content = "{ctx.message.attachments[0].url}" WHERE tags_name = "{taq}"')
-                    db.commit()
-                    await ctx.send(f"Tag named `{taq}` edited successfully")
+                if thinq.lower() == "content":
+                    if attachment and content is None:
+                        sql.execute(
+                            f'UPDATE tags_list set tags_content = "{ctx.message.attachments[0].url}" WHERE tags_name = "{taq}"')
+                        db.commit()
+                        await ctx.send(f"Tag named `{taq}` edited successfully")
+                    else:
+                        if content is None:
+                            embed = discord.Embed(
+                                title=":x: Command Raised an Exception!",
+                                color=0xff0000
+                            )
+                            embed.add_field(name="Error:",
+                                            value=f"```content is a required argument that is missing```")
+                            embed.set_footer(text=f"MissingRequiredArgument | Occurred in: {ctx.command}")
+                            await ctx.send(embed=embed)
+                        else:
+                            sql.execute(f'UPDATE tags_list set tags_content = "{content}" WHERE tags_name = "{taq}"')
+                            db.commit()
+                            await ctx.send(f"Tag named `{taq}` edited successfully")
+                elif thinq.lower() == "name":
+                    if content is None:
+                        embed = discord.Embed(
+                            title=":x: Command Raised an Exception!",
+                            color=0xff0000
+                        )
+                        embed.add_field(name="Error:", value=f"```content is a required argument that is missing```")
+                        embed.set_footer(text=f"MissingRequiredArgument | Occurred in: {ctx.command}")
+                        await ctx.send(embed=embed)
+                    else:
+                        sql.execute(
+                            f'UPDATE tags_list set tags_name = "{content}" WHERE tags_name = "{taq}"')
+                        db.commit()
+                        await ctx.send(f"Tag named `{taq}` edited successfully")
                 else:
-                    sql.execute(f'UPDATE tags_list set tags_content = "{content}" WHERE tags_name = "{taq}"')
-                    db.commit()
-                    await ctx.send(f"Tag named `{taq}` edited successfully")
+                    await ctx.send(":x: That is not the correct formatting of the command! Do `h.help` for detailed help of the command.")
             else:
                 await ctx.send(":x: You can't edit that tag!")
         else:
