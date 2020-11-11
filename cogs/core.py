@@ -9,6 +9,7 @@ import time_utils
 
 start_time = datetime.datetime.utcnow()
 
+
 x = 0
 if x == 0:
     DIR = os.path.dirname(__file__)
@@ -19,6 +20,8 @@ elif x == 1:
     DIR = os.path.dirname(__file__)
     db = sqlite3.connect(os.path.join(DIR, "/root/mobot/tags.db"))
     sql = db.cursor()
+else:
+    sql = None
 
 sql.execute('create table if not exists tags_list("id" integer not null,'
             '"tags_name" text not null, "tags_content" text not null, "tags_date" integer not null)')
