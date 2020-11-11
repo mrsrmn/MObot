@@ -11,6 +11,8 @@ class utility(commands.Cog):
     def __init__(self, client):
         self.client = client
 
+
+
     @commands.command(aliases=["help", "h"])
     async def _help(self, ctx):
         if ctx.guild.id in epic_servers:
@@ -31,7 +33,7 @@ class utility(commands.Cog):
             embed.add_field(name="credits", value="Bots credits")
             embed.add_field(name="invite", value="Invite link for MO")
             embed.add_field(name="support", value="Support server for MO")
-            embed.add_field(name="support", value="Vote link for MO")
+            embed.add_field(name="vote", value="Vote link for MO")
             embed.set_thumbnail(url="https://cdn.discordapp.com/avatars/7738394075969618"
                                     "03/c32e9d106e4204ca6e68f2ec5b959c32.webp?size=1024")
             await ctx.send(embed=embed)

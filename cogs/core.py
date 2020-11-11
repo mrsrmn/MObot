@@ -9,7 +9,7 @@ import time_utils
 start_time = datetime.datetime.utcnow()
 
 
-x = 1
+x = 0
 if x == 0:
     DIR = os.path.dirname(__file__)
     db = sqlite3.connect(os.path.join(DIR, "C:/Users/emirs/PycharmProjects/mobot/tags.db"))
@@ -53,6 +53,11 @@ class core(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         print("Bot is ready")
+
+    @commands.Cog.listener()
+    async def on_guild_join(self, guild):
+        sql.execute(f'create table if not exists "{guild.id}"("id" integer not null,'
+                    '"tags_name" text not null, "tags_content" text not null, "tags_date" integer not null)')
 
     @commands.command(aliases=["add", "c"])
     async def create(self, ctx, name, *, content=None):
