@@ -15,5 +15,6 @@ client = commands.Bot(command_prefix="h.", intents=intents)
 client.remove_command("help")
 
 client.load_extension("cogs.core")
+client.load_extension("cogs.utility")
 
 client.run(TOKEN)
