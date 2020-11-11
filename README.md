@@ -1,2 +1,2 @@
 # MObot
-MO is an tag bot made with discord.py and SQLite
+MO is a tag bot made with discord.py (Python) and SQLite
