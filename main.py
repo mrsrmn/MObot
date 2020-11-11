@@ -1,6 +1,10 @@
 from discord.ext import commands
+import discord
 
-client = commands.Bot(command_prefix="h.")
+intents = discord.Intents.default()
+intents.members = True
+
+client = commands.Bot(command_prefix="h.", intents=intents)
 client.remove_command("help")
 
 client.load_extension("cogs.core")

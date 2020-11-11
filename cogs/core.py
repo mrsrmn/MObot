@@ -4,6 +4,7 @@ import datetime
 import sqlite3
 import os
 import asyncio
+import random
 
 x = 0
 if x == 0:
@@ -221,6 +222,23 @@ class core(commands.Cog):
             embed.set_footer(text=f"Taq Count: {finalcount}")
             await ctx.send(embed=embed)
 
+    @commands.command()
+    async def random(self, ctx):
+        sql.execute(f'SELECT tags_name FROM tags_list')
+        name = sql.fetchall()
+        the = random.choice(name)
+
+        sql.execute(f'SELECT tags_content FROM tags_list WHERE tags_name= "{the[0]}"')
+        final = sql.fetchone()
+
+        sql.execute(f'SELECT tags_name FROM tags_list WHERE tags_name= "{the[0]}"')
+        tagname = sql.fetchone()
+
+        sql.execute(f'SELECT id FROM tags_list WHERE tags_name= "{the[0]}"')
+        owner = sql.fetchone()
+        user = self.client.get_user(owner[0])
+
+        await ctx.send(f"**Taqs Name:** {tagname[0]}\n**Taqs Owner:** {user}\n{final[0]}")
 
     @commands.command(aliases=["i"])
     async def info(self, ctx, taq):
