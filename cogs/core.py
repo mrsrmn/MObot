@@ -5,6 +5,9 @@ import sqlite3
 import os
 import asyncio
 import random
+import time_utils
+
+start_time = datetime.datetime.utcnow()
 
 x = 0
 if x == 0:
@@ -78,6 +81,8 @@ class core(commands.Cog):
         embed.add_field(name="pinq", value="Qives the latency")
         embed.add_field(name="info <taq>", value="Qives info about a taq")
         embed.add_field(name="about", value="About the bot")
+        embed.add_field(name="random", value="Qives a random taq")
+        embed.add_field(name="credits", value="Bots credits")
         embed.set_thumbnail(url="https://cdn.discordapp.com/avatars/7738394075969618"
                                 "03/c32e9d106e4204ca6e68f2ec5b959c32.webp?size=1024")
         await ctx.send(embed=embed)
@@ -292,6 +297,8 @@ class core(commands.Cog):
         final = sql.fetchall()
         finalcount = len(final)
 
+        user = self.client.get_user(444550944110149633)
+
         embed = discord.Embed(
             title="MOBot Info :flushed:",
             description="MO is an epic bot made for h2.1 :sunglasses:",
@@ -299,8 +306,25 @@ class core(commands.Cog):
         )
         embed.add_field(name="Pinq:", value=f"{round(self.client.latency * 1000)}ms")
         embed.add_field(name="Command Count:", value=f"{len(self.client.commands)}")
-        embed.add_field(name="Made by:", value="MakufonSkifto#1414 :sunglasses:")
+        embed.add_field(name="Made by:", value=f"{user} :sunglasses:")
         embed.add_field(name="Taq Count:", value=f"{finalcount}")
+        embed.add_field(name="Uptime", value=time_utils.get_bot_uptime(start_time))
+        await ctx.send(embed=embed)
+
+    @commands.command()
+    async def credits(self, ctx):
+        makufon = self.client.get_user(444550944110149633)
+        human = self.client.get_user(429935667737264139)
+        lunah = self.client.get_user(603635602809946113)
+        embed = discord.Embed(
+            title="MOBot Credits",
+            description="These are the epic people who made MOBot possible",
+            colour=discord.Colour.purple()
+        )
+        embed.add_field(name="Developer:", value=makufon)
+        embed.add_field(name="Special Thanks:", value=f"{lunah}\n{human}")
+        embed.add_field(name="Library:", value="discord.py")
+        embed.add_field(name="DB Used:", value="SQLite")
         await ctx.send(embed=embed)
 
 
