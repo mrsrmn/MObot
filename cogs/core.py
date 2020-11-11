@@ -56,7 +56,7 @@ class core(commands.Cog):
 
     @commands.command(aliases=["help", "h"])
     async def _help(self, ctx):
-        if ctx.author.id in admin_ids:
+        if ctx.guild.id in epic_servers:
             embed = discord.Embed(
                 title="MOBot Help",
                 colour=discord.Colour.purple()
