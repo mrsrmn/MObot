@@ -129,7 +129,7 @@ class core(commands.Cog):
                         db.commit()
                         await ctx.send(f":white_check_mark: Created tag with the name `{name}`")
 
-    @commands.command(aliases=["t"])
+    @commands.command()
     async def tag(self, ctx, tag=None):
         if ctx.guild.id in epic_servers:
             await ctx.send("It's `h.taq` you fucking g-spy")
@@ -152,7 +152,7 @@ class core(commands.Cog):
                 else:
                     await ctx.send(f"Tag named `{tag}` doesn't exist!")
 
-    @commands.command()
+    @commands.command(aliases=["t"])
     async def taq(self, ctx, taq=None):
         if ctx.guild.id in epic_servers:
             if taq is None:

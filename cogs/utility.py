@@ -11,8 +11,6 @@ class utility(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-
-
     @commands.command(aliases=["help", "h"])
     async def _help(self, ctx):
         if ctx.guild.id in epic_servers:
