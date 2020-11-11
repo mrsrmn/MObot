@@ -3,7 +3,6 @@ from discord.ext import commands
 import datetime
 import sqlite3
 import os
-import asyncio
 import random
 import time_utils
 
@@ -23,14 +22,8 @@ elif x == 1:
 else:
     sql = None
 
-sql.execute('create table if not exists tags_list("id" integer not null,'
-            '"tags_name" text not null, "tags_content" text not null, "tags_date" integer not null)')
-
-sql.execute(f'SELECT tags_name FROM tags_list')
-final1 = sql.fetchall()
-final2 = len(final1)
-
 admin_ids = [444550944110149633, 429935667737264139, 603635602809946113]
+epic_servers = [773249498104201228, 713675042143076352]
 
 
 class core(commands.Cog):
@@ -38,11 +31,6 @@ class core(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    async def status_task(self):
-        while True:
-            await self.client.change_presence(status=discord.Status.idle,
-                                              activity=discord.Game(f"Servinq h2.1 with {final2} taqs"))
-            await asyncio.sleep(300)
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
@@ -66,7 +54,6 @@ class core(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         print("Bot is ready")
-        self.client.loop.create_task(self.status_task())
 
     @commands.command(aliases=["help", "h"])
     async def _help(self, ctx):
@@ -91,45 +78,92 @@ class core(commands.Cog):
 
     @commands.command(aliases=["add", "c"])
     async def create(self, ctx, name, *, content=None):
-        attachment = ctx.message.attachments
-        compensation = datetime.timedelta(hours=9)
-        now = datetime.datetime.now() + compensation
-        sql.execute(f'select tags_name from tags_list where tags_name = "{name}"')
-        does_exist = sql.fetchone()
+        if ctx.guild.id in epic_servers:
+            attachment = ctx.message.attachments
+            compensation = datetime.timedelta(hours=9)
+            now = datetime.datetime.now() + compensation
 
-        if does_exist is not None:
-            await ctx.send(f"Taq named `{name}` already exists!")
-        else:
-            if attachment and content is None:
-                sql.execute('insert into tags_list(id, tags_name, tags_content, tags_date) values(?,?,?,?)',
-                            (ctx.author.id, name, ctx.message.attachments[0].url, now))
-                db.commit()
-                await ctx.send(f":white_check_mark: Created taq with the name `{name}`")
+            sql.execute(f'select tags_name from "{ctx.guild.id}" where tags_name = "{name}"')
+            does_exist = sql.fetchone()
+
+            if does_exist is not None:
+                await ctx.send(f"Taq named `{name}` already exists!")
             else:
-                if content is None:
-                    embed = discord.Embed(
-                        title=":x: Command Raised an Exception!",
-                        color=0xff0000
-                    )
-                    embed.add_field(name="Error:",
-                                    value=f"```content is a required argument that is missing```")
-                    embed.set_footer(text=f"MissingRequiredArgument | Occurred in: {ctx.command}")
-                    await ctx.send(embed=embed)
-                else:
-                    sql.execute('insert into tags_list(id, tags_name, tags_content, tags_date) values(?,?,?,?)',
-                                (ctx.author.id, name, content, now))
+                if attachment and content is None:
+                    sql.execute(f'insert into "773249498104201228"(id, tags_name, tags_content, tags_date) '
+                                f'values(?,?,?,?)', (ctx.author.id, name, ctx.message.attachments[0].url, now))
                     db.commit()
                     await ctx.send(f":white_check_mark: Created taq with the name `{name}`")
+                else:
+                    if content is None:
+                        embed = discord.Embed(
+                            title=":x: Command Raised an Exception!",
+                            color=0xff0000
+                        )
+                        embed.add_field(name="Error:",
+                                        value=f"```content is a required argument that is missing```")
+                        embed.set_footer(text=f"MissingRequiredArgument | Occurred in: {ctx.command}")
+                        await ctx.send(embed=embed)
+                    else:
+                        sql.execute(
+                            f'insert into "773249498104201228"(id, tags_name, tags_content, tags_date) values(?,?,?,?)',
+                            (ctx.author.id, name, content, now))
+                        db.commit()
+                        await ctx.send(f":white_check_mark: Created taq with the name `{name}`")
+        else:
+            attachment = ctx.message.attachments
+            compensation = datetime.timedelta(hours=9)
+            now = datetime.datetime.now() + compensation
+
+            sql.execute(f'create table if not exists "{ctx.guild.id}"("id" integer not null,'
+                        '"tags_name" text not null, "tags_content" text not null, "tags_date" integer not null)')
+
+            sql.execute(f'select tags_name from "{ctx.guild.id}" where tags_name = "{name}"')
+            does_exist = sql.fetchone()
+
+            if does_exist is not None:
+                await ctx.send(f"Taq named `{name}` already exists!")
+            else:
+                if attachment and content is None:
+                    sql.execute(f'insert into "{ctx.guild.id}"(id, tags_name, tags_content, tags_date) values(?,?,?,?)',
+                                (ctx.author.id, name, ctx.message.attachments[0].url, now))
+                    db.commit()
+                    await ctx.send(f":white_check_mark: Created taq with the name `{name}`")
+                else:
+                    if content is None:
+                        embed = discord.Embed(
+                            title=":x: Command Raised an Exception!",
+                            color=0xff0000
+                        )
+                        embed.add_field(name="Error:",
+                                        value=f"```content is a required argument that is missing```")
+                        embed.set_footer(text=f"MissingRequiredArgument | Occurred in: {ctx.command}")
+                        await ctx.send(embed=embed)
+                    else:
+                        sql.execute(
+                            f'insert into "{ctx.guild.id}"(id, tags_name, tags_content, tags_date) values(?,?,?,?)',
+                            (ctx.author.id, name, content, now))
+                        db.commit()
+                        await ctx.send(f":white_check_mark: Created taq with the name `{name}`")
 
     @commands.command(aliases=["t"])
     async def taq(self, ctx, taq):
-        sql.execute(f'SELECT tags_content FROM tags_list WHERE tags_name= "{taq}"')
-        final = sql.fetchone()
+        if ctx.guild.id in epic_servers:
+            sql.execute(f'SELECT tags_content FROM "773249498104201228" WHERE tags_name= "{taq}"')
+            final = sql.fetchone()
 
-        if final:
-            await ctx.send(final[0])
+            if final:
+                await ctx.send(final[0])
+            else:
+                await ctx.send(f"Taq named `{taq}` doesn't exist!")
         else:
-            await ctx.send(f"Taq named `{taq}` doesn't exist!")
+            sql.execute(f'SELECT tags_content FROM "{ctx.guild.id}" WHERE tags_name= "{taq}"')
+            final = sql.fetchone()
+
+            if final:
+                await ctx.send(final[0])
+            else:
+                await ctx.send(f"Taq named `{taq}` doesn't exist!")
 
     @commands.command()
     async def tag(self, ctx):
@@ -137,32 +171,51 @@ class core(commands.Cog):
 
     @commands.has_permissions(manage_messages=True)
     @commands.command(aliases=["d"])
-    async def delete(self, ctx, taq):
-        user = ctx.author.id
-        sql.execute(f'SELECT tags_content FROM tags_list WHERE tags_name= "{taq}"')
-        final = sql.fetchone()
+    async def delete(self, ctx, tag):
+        if ctx.guild.id in epic_servers:
+            user = ctx.author.id
+            sql.execute(f'SELECT tags_content FROM "773249498104201228" WHERE tags_name= "{tag}"')
+            final = sql.fetchone()
 
-        sql.execute(f'SELECT id FROM tags_list WHERE tags_name = "{taq}"')
-        id1 = sql.fetchone()
+            sql.execute(f'SELECT id FROM "773249498104201228" WHERE tags_name = "{tag}"')
+            id1 = sql.fetchone()
 
-        if final:
-            if id1[0] == user or ctx.author.id in admin_ids:
-                sql.execute(f'DELETE from tags_list where tags_name = "{taq}"')
-                db.commit()
-                await ctx.send(f"Taq named `{taq}` deleted successfully")
+            if final:
+                if id1[0] == user or ctx.author.id in admin_ids:
+                    sql.execute(f'DELETE from "773249498104201228" where tags_name = "{tag}"')
+                    db.commit()
+                    await ctx.send(f"Taq named `{tag}` deleted successfully")
+                else:
+                    await ctx.send(":x: You can't delete that taq!")
             else:
-                await ctx.send(":x: You can't delete that taq!")
+                await ctx.send(f"Taq named `{tag}` doesn't exist!")
         else:
-            await ctx.send(f"Taq named `{taq}` doesn't exist!")
+            user = ctx.author.id
+            sql.execute(f'SELECT tags_content FROM "{ctx.guild.id}" WHERE tags_name= "{tag}"')
+            final = sql.fetchone()
+
+            sql.execute(f'SELECT id FROM "{ctx.guild.id}" WHERE tags_name = "{tag}"')
+            id1 = sql.fetchone()
+
+            if final:
+                if id1[0] == user or ctx.author.id in admin_ids:
+                    sql.execute(f'DELETE from "{ctx.guild.id}" where tags_name = "{tag}"')
+                    db.commit()
+                    await ctx.send(f"Taq named `{tag}` deleted successfully")
+                else:
+                    await ctx.send(":x: You can't delete that taq!")
+            else:
+                await ctx.send(f"Taq named `{tag}` doesn't exist!")
+
 
     @commands.command(aliases=["e"])
     async def edit(self, ctx, thinq, taq, *, content=None):
         attachment = ctx.message.attachments
         user = ctx.author.id
-        sql.execute(f'SELECT tags_content FROM tags_list WHERE tags_name= "{taq}"')
+        sql.execute(f'SELECT tags_content FROM "{ctx.guild.id}" WHERE tags_name= "{taq}"')
         final = sql.fetchone()
 
-        sql.execute(f'SELECT id FROM tags_list WHERE tags_name = "{taq}"')
+        sql.execute(f'SELECT id FROM "{ctx.guild.id}" WHERE tags_name = "{taq}"')
         id1 = sql.fetchone()
 
         if final:
@@ -170,7 +223,7 @@ class core(commands.Cog):
                 if thinq.lower() == "content":
                     if attachment and content is None:
                         sql.execute(
-                            f'UPDATE tags_list set tags_content = "{ctx.message.attachments[0].url}" '
+                            f'UPDATE "{ctx.guild.id}" set tags_content = "{ctx.message.attachments[0].url}" '
                             f'WHERE tags_name = "{taq}"')
                         db.commit()
                         await ctx.send(f"Tag named `{taq}` edited successfully")
@@ -185,7 +238,8 @@ class core(commands.Cog):
                             embed.set_footer(text=f"MissingRequiredArgument | Occurred in: {ctx.command}")
                             await ctx.send(embed=embed)
                         else:
-                            sql.execute(f'UPDATE tags_list set tags_content = "{content}" WHERE tags_name = "{taq}"')
+                            sql.execute(f'UPDATE "{ctx.guild.id}"'
+                                        f' set tags_content = "{content}" WHERE tags_name = "{taq}"')
                             db.commit()
                             await ctx.send(f"Tag named `{taq}` edited successfully")
                 elif thinq.lower() == "name":
@@ -199,7 +253,7 @@ class core(commands.Cog):
                         await ctx.send(embed=embed)
                     else:
                         sql.execute(
-                            f'UPDATE tags_list set tags_name = "{content}" WHERE tags_name = "{taq}"')
+                            f'UPDATE "{ctx.guild.id}" set tags_name = "{content}" WHERE tags_name = "{taq}"')
                         db.commit()
                         await ctx.send(f"Tag named `{taq}` edited successfully")
                 else:
@@ -213,7 +267,7 @@ class core(commands.Cog):
     @commands.command(aliases=["l", "list"])
     async def _list(self, ctx):
         user = ctx.author.id
-        sql.execute(f'SELECT tags_name FROM tags_list WHERE id = {user}')
+        sql.execute(f'SELECT tags_name FROM "{ctx.guild.id}" WHERE id = {user}')
         final = sql.fetchall()
         finallist = str(final)
         finalc = len(final)
@@ -242,7 +296,7 @@ class core(commands.Cog):
 
     @commands.command(aliases=["la"])
     async def listall(self, ctx):
-        sql.execute(f'SELECT tags_name FROM tags_list')
+        sql.execute(f'SELECT tags_name FROM "{ctx.guild.id}"')
         final = sql.fetchall()
         finalstr = str(final)
         finalcount = len(final)
@@ -271,17 +325,17 @@ class core(commands.Cog):
 
     @commands.command()
     async def random(self, ctx):
-        sql.execute(f'SELECT tags_name FROM tags_list')
+        sql.execute(f'SELECT tags_name FROM "{ctx.guild.id}"')
         name = sql.fetchall()
         the = random.choice(name)
 
-        sql.execute(f'SELECT tags_content FROM tags_list WHERE tags_name= "{the[0]}"')
+        sql.execute(f'SELECT tags_content FROM "{ctx.guild.id}" WHERE tags_name= "{the[0]}"')
         final = sql.fetchone()
 
-        sql.execute(f'SELECT tags_name FROM tags_list WHERE tags_name= "{the[0]}"')
+        sql.execute(f'SELECT tags_name FROM "{ctx.guild.id}" WHERE tags_name= "{the[0]}"')
         tagname = sql.fetchone()
 
-        sql.execute(f'SELECT id FROM tags_list WHERE tags_name= "{the[0]}"')
+        sql.execute(f'SELECT id FROM "{ctx.guild.id}" WHERE tags_name= "{the[0]}"')
         owner = sql.fetchone()
         user = self.client.get_user(owner[0])
 
@@ -289,13 +343,13 @@ class core(commands.Cog):
 
     @commands.command(aliases=["i"])
     async def info(self, ctx, taq):
-        sql.execute(f'SELECT id FROM tags_list WHERE tags_name = "{taq}"')
+        sql.execute(f'SELECT id FROM "{ctx.guild.id}" WHERE tags_name = "{taq}"')
         ownerid = sql.fetchone()
 
-        sql.execute(f'SELECT tags_date FROM tags_list WHERE tags_name = "{taq}"')
+        sql.execute(f'SELECT tags_date FROM "{ctx.guild.id}" WHERE tags_name = "{taq}"')
         date = sql.fetchone()
 
-        sql.execute(f'SELECT tags_content FROM tags_list WHERE tags_name= "{taq}"')
+        sql.execute(f'SELECT tags_content FROM "{ctx.guild.id}" WHERE tags_name= "{taq}"')
         content = sql.fetchone()
 
         if content:
@@ -335,7 +389,7 @@ class core(commands.Cog):
 
     @commands.command()
     async def about(self, ctx):
-        sql.execute(f'SELECT tags_name FROM tags_list')
+        sql.execute(f'SELECT tags_name FROM "{ctx.guild.id}"')
         final = sql.fetchall()
         finalcount = len(final)
 
