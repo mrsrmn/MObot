@@ -1,2 +1,2 @@
 # MObot
-epic tag bot :sunglasses: :sunglasses:
+MO is an tag bot made with discord.py and SQLite
