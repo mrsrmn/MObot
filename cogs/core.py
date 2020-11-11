@@ -31,7 +31,6 @@ class core(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
@@ -57,24 +56,44 @@ class core(commands.Cog):
 
     @commands.command(aliases=["help", "h"])
     async def _help(self, ctx):
-        embed = discord.Embed(
-            title="MOBot Help",
-            colour=discord.Colour.purple()
-        )
-        embed.add_field(name="taq <taq>", value="Shows you the specified taq")
-        embed.add_field(name="create <name> <content>", value="Creates a taq")
-        embed.add_field(name="delete <taq>", value="Deletes a taq")
-        embed.add_field(name="edit <name/content> <taq> <content>", value="Edits a taq you own")
-        embed.add_field(name="list", value="Qives a list of the taqs you've created")
-        embed.add_field(name="listall", value="Qives a list of the taqs (all of them)")
-        embed.add_field(name="pinq", value="Qives the latency")
-        embed.add_field(name="info <taq>", value="Qives info about a taq")
-        embed.add_field(name="about", value="About the bot")
-        embed.add_field(name="random", value="Qives a random taq")
-        embed.add_field(name="credits", value="Bots credits")
-        embed.set_thumbnail(url="https://cdn.discordapp.com/avatars/7738394075969618"
-                                "03/c32e9d106e4204ca6e68f2ec5b959c32.webp?size=1024")
-        await ctx.send(embed=embed)
+        if ctx.author.id in admin_ids:
+            embed = discord.Embed(
+                title="MOBot Help",
+                colour=discord.Colour.purple()
+            )
+            embed.add_field(name="taq <taq>", value="Shows you the specified taq")
+            embed.add_field(name="create <name> <content>", value="Creates a taq")
+            embed.add_field(name="delete <taq>", value="Deletes a taq")
+            embed.add_field(name="edit <name/content> <taq> <content>", value="Edits a taq you own")
+            embed.add_field(name="list", value="Qives a list of the taqs you've created")
+            embed.add_field(name="listall", value="Qives a list of the taqs (all of them)")
+            embed.add_field(name="pinq", value="Qives the latency")
+            embed.add_field(name="info <taq>", value="Qives info about a taq")
+            embed.add_field(name="about", value="About the bot")
+            embed.add_field(name="random", value="Qives a random taq")
+            embed.add_field(name="credits", value="Bots credits")
+            embed.set_thumbnail(url="https://cdn.discordapp.com/avatars/7738394075969618"
+                                    "03/c32e9d106e4204ca6e68f2ec5b959c32.webp?size=1024")
+            await ctx.send(embed=embed)
+        else:
+            embed = discord.Embed(
+                title="MOBot Help",
+                colour=discord.Colour.purple()
+            )
+            embed.add_field(name="tag <tag>", value="Shows you the specified tag")
+            embed.add_field(name="create <name> <content>", value="Creates a tag")
+            embed.add_field(name="delete <tag>", value="Deletes a tag")
+            embed.add_field(name="edit <name/content> <tag> <content>", value="Edits a tag you own")
+            embed.add_field(name="list", value="Gives a list of the tags you've created")
+            embed.add_field(name="listall", value="Gives a list of the tags (all of them)")
+            embed.add_field(name="ping", value="Gives the latency")
+            embed.add_field(name="info <tag>", value="Gives info about a tag")
+            embed.add_field(name="about", value="About the bot")
+            embed.add_field(name="random", value="Gives a random tag")
+            embed.add_field(name="credits", value="Bots credits")
+            embed.set_thumbnail(url="https://cdn.discordapp.com/avatars/7738394075969618"
+                                    "03/c32e9d106e4204ca6e68f2ec5b959c32.webp?size=1024")
+            await ctx.send(embed=embed)
 
     @commands.command(aliases=["add", "c"])
     async def create(self, ctx, name, *, content=None):
@@ -461,21 +480,38 @@ class core(commands.Cog):
 
     @commands.command()
     async def random(self, ctx):
-        sql.execute(f'SELECT tags_name FROM "{ctx.guild.id}"')
-        name = sql.fetchall()
-        the = random.choice(name)
+        if ctx.guild.id in epic_servers:
+            sql.execute(f'SELECT tags_name FROM "773249498104201228"')
+            name = sql.fetchall()
+            the = random.choice(name)
 
-        sql.execute(f'SELECT tags_content FROM "{ctx.guild.id}" WHERE tags_name= "{the[0]}"')
-        final = sql.fetchone()
+            sql.execute(f'SELECT tags_content FROM "773249498104201228" WHERE tags_name= "{the[0]}"')
+            final = sql.fetchone()
 
-        sql.execute(f'SELECT tags_name FROM "{ctx.guild.id}" WHERE tags_name= "{the[0]}"')
-        tagname = sql.fetchone()
+            sql.execute(f'SELECT tags_name FROM "773249498104201228" WHERE tags_name= "{the[0]}"')
+            tagname = sql.fetchone()
 
-        sql.execute(f'SELECT id FROM "{ctx.guild.id}" WHERE tags_name= "{the[0]}"')
-        owner = sql.fetchone()
-        user = self.client.get_user(owner[0])
+            sql.execute(f'SELECT id FROM "773249498104201228" WHERE tags_name= "{the[0]}"')
+            owner = sql.fetchone()
+            user = self.client.get_user(owner[0])
 
-        await ctx.send(f"**Taqs Name:** {tagname[0]}\n**Taqs Owner:** {user}\n{final[0]}")
+            await ctx.send(f"**Taqs Name:** {tagname[0]}\n**Taqs Owner:** {user}\n{final[0]}")
+        else:
+            sql.execute(f'SELECT tags_name FROM "{ctx.guild.id}"')
+            name = sql.fetchall()
+            the = random.choice(name)
+
+            sql.execute(f'SELECT tags_content FROM "{ctx.guild.id}" WHERE tags_name= "{the[0]}"')
+            final = sql.fetchone()
+
+            sql.execute(f'SELECT tags_name FROM "{ctx.guild.id}" WHERE tags_name= "{the[0]}"')
+            tagname = sql.fetchone()
+
+            sql.execute(f'SELECT id FROM "{ctx.guild.id}" WHERE tags_name= "{the[0]}"')
+            owner = sql.fetchone()
+            user = self.client.get_user(owner[0])
+
+            await ctx.send(f"**Tags Name:** {tagname[0]}\n**Tags Owner:** {user}\n{final[0]}")
 
     @commands.command(aliases=["i"])
     async def info(self, ctx, taq):
@@ -501,10 +537,13 @@ class core(commands.Cog):
 
     @commands.command(aliases=["shutup", "die"])
     async def fuckoff(self, ctx):
-        await ctx.send("qoodbye cruel world :pensive: :v:")
-        exit()
+        if ctx.author.id in admin_ids:
+            await ctx.send("goodbye cruel world :pensive: :v:")
+            exit()
+        else:
+            return
 
-    @commands.command()
+    @commands.command(aliases=["ping"])
     async def pinq(self, ctx):
         await ctx.send(f"**{round(self.client.latency * 1000)}ms**")
 
@@ -525,23 +564,38 @@ class core(commands.Cog):
 
     @commands.command()
     async def about(self, ctx):
-        sql.execute(f'SELECT tags_name FROM "{ctx.guild.id}"')
-        final = sql.fetchall()
-        finalcount = len(final)
+        if ctx.guild.id in epic_servers:
+            sql.execute(f'SELECT tags_name FROM "773249498104201228"')
+            final = sql.fetchall()
+            finalcount = len(final)
 
-        user = self.client.get_user(444550944110149633)
+            user = self.client.get_user(444550944110149633)
 
-        embed = discord.Embed(
-            title="MOBot Info :flushed:",
-            description="MO is an epic bot made for h2.1 :sunglasses:",
-            color=discord.Colour.purple()
-        )
-        embed.add_field(name="Pinq:", value=f"{round(self.client.latency * 1000)}ms")
-        embed.add_field(name="Command Count:", value=f"{len(self.client.commands)}")
-        embed.add_field(name="Made by:", value=f"{user} :sunglasses:")
-        embed.add_field(name="Taq Count:", value=f"{finalcount}")
-        embed.add_field(name="Uptime", value=time_utils.get_bot_uptime(start_time))
-        await ctx.send(embed=embed)
+            embed = discord.Embed(
+                title="MOBot Info :flushed:",
+                description="MO is an epic bot made for h2.1 :sunglasses:",
+                color=discord.Colour.purple()
+            )
+            embed.add_field(name="Pinq:", value=f"{round(self.client.latency * 1000)}ms")
+            embed.add_field(name="Command Count:", value=f"{len(self.client.commands)}")
+            embed.add_field(name="Made by:", value=f"{user} :sunglasses:")
+            embed.add_field(name="Taq Count:", value=f"{finalcount}")
+            embed.add_field(name="Uptime", value=time_utils.get_bot_uptime(start_time))
+            await ctx.send(embed=embed)
+        else:
+
+            user = self.client.get_user(444550944110149633)
+
+            embed = discord.Embed(
+                title="MOBot Info ",
+                description="MO is a very powerful tag bot powered with SQLite",
+                color=discord.Colour.purple()
+            )
+            embed.add_field(name="Ping:", value=f"{round(self.client.latency * 1000)}ms")
+            embed.add_field(name="Command Count:", value=f"{len(self.client.commands)}")
+            embed.add_field(name="Made by:", value=f"{user}")
+            embed.add_field(name="Uptime", value=time_utils.get_bot_uptime(start_time))
+            await ctx.send(embed=embed)
 
     @commands.command()
     async def credits(self, ctx):
