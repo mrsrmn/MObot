@@ -18,3 +18,4 @@ LICENSE
 .idea/sqldialects.xml
 .idea/vcs.xml
 __pycache__/
+tags.db
