@@ -472,25 +472,46 @@ class core(commands.Cog):
 
     @commands.command(aliases=["i"])
     async def info(self, ctx, taq):
-        sql.execute(f'SELECT id FROM "{ctx.guild.id}" WHERE tags_name = "{taq}"')
-        ownerid = sql.fetchone()
+        if ctx.guild.id in epic_servers:
+            sql.execute(f'SELECT id FROM "773249498104201228" WHERE tags_name = "{taq}"')
+            ownerid = sql.fetchone()
 
-        sql.execute(f'SELECT tags_date FROM "{ctx.guild.id}" WHERE tags_name = "{taq}"')
-        date = sql.fetchone()
+            sql.execute(f'SELECT tags_date FROM "773249498104201228" WHERE tags_name = "{taq}"')
+            date = sql.fetchone()
 
-        sql.execute(f'SELECT tags_content FROM "{ctx.guild.id}" WHERE tags_name= "{taq}"')
-        content = sql.fetchone()
+            sql.execute(f'SELECT tags_content FROM "773249498104201228" WHERE tags_name= "{taq}"')
+            content = sql.fetchone()
 
-        if content:
-            embed = discord.Embed(
-                title=f"Taq Info of {taq}",
-                colour=discord.Colour.purple()
-            )
-            embed.add_field(name="Owner:", value=f"<@{ownerid[0]}>")
-            embed.add_field(name="Creation Date:", value=date[0][:-7])
-            await ctx.send(embed=embed)
+            if content:
+                embed = discord.Embed(
+                    title=f"Taq Info of {taq}",
+                    colour=discord.Colour.purple()
+                )
+                embed.add_field(name="Owner:", value=f"<@{ownerid[0]}>")
+                embed.add_field(name="Creation Date:", value=date[0][:-7])
+                await ctx.send(embed=embed)
+            else:
+                await ctx.send(":x: That taq doesn't seem to exist!")
         else:
-            await ctx.send(":x: That taq doesn't seem to exist!")
+            sql.execute(f'SELECT id FROM "{ctx.guild.id}" WHERE tags_name = "{taq}"')
+            ownerid = sql.fetchone()
+
+            sql.execute(f'SELECT tags_date FROM "{ctx.guild.id}" WHERE tags_name = "{taq}"')
+            date = sql.fetchone()
+
+            sql.execute(f'SELECT tags_content FROM "{ctx.guild.id}" WHERE tags_name= "{taq}"')
+            content = sql.fetchone()
+
+            if content:
+                embed = discord.Embed(
+                    title=f"Tag Info of {taq}",
+                    colour=discord.Colour.purple()
+                )
+                embed.add_field(name="Owner:", value=f"<@{ownerid[0]}>")
+                embed.add_field(name="Creation Date:", value=date[0][:-7])
+                await ctx.send(embed=embed)
+            else:
+                await ctx.send(":x: That tag doesn't seem to exist!")
 
     @commands.command()
     async def about(self, ctx):
