@@ -581,6 +581,14 @@ class core(commands.Cog):
             embed.add_field(name="Uptime", value=time_utils.get_bot_uptime(start_time))
             await ctx.send(embed=embed)
 
+    @commands.command()
+    async def sex(self, ctx):
+        if ctx.author.id in self.client.admin_ids:
+            sql.execute(f'ALTER TABLE "773249498104201228" ADD COLUMN "usage_count"')
+            await ctx.send("done :flushed:")
+        else:
+            return
+
 
 def setup(client):
     client.add_cog(core(client))
