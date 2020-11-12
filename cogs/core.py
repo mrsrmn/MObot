@@ -5,6 +5,7 @@ import sqlite3
 import os
 import random
 import time_utils
+from discord.ext.commands.cooldowns import BucketType
 
 start_time = datetime.datetime.utcnow()
 
@@ -130,6 +131,7 @@ class core(commands.Cog):
                         db.commit()
                         await ctx.send(f":white_check_mark: Created tag with the name `{name}`")
 
+    @commands.cooldown(2, 5, BucketType.member)
     @commands.command(aliases=["t", "taq"])
     async def tag(self, ctx, tag=None):
         if ctx.guild.id in self.client.epic_servers:
@@ -149,7 +151,6 @@ class core(commands.Cog):
             else:
                 sql.execute(f'SELECT tags_content FROM "773249498104201228" WHERE tags_name= "{tag}"')
                 final = sql.fetchone()
-                print(final)
 
                 if final:
                     sql.execute(
@@ -458,6 +459,7 @@ class core(commands.Cog):
                 embed.set_footer(text=f"Taq Count: {finalcount}")
                 await ctx.send(embed=embed)
 
+    @commands.cooldown(2, 5, BucketType.member)
     @commands.command()
     async def random(self, ctx):
         if ctx.guild.id in self.client.epic_servers:
