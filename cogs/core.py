@@ -199,9 +199,9 @@ class core(commands.Cog):
                     db.commit()
                     await ctx.send(f"Tag named `{tag}` deleted successfully")
                 else:
-                    await ctx.send("":x: You can't delete that tag! If you are the owner or an admin"
-                               " of this server, please enter the support server and create ticket"
-                               " so we can whitelist you about the tag deletement\n https://discord.gg/6PX24ZPnDt")")
+                    await ctx.send(":x: You can't delete that tag! If you are the owner or an admin"
+                                   " of this server, please enter the support server and create ticket"
+                                   " so we can whitelist you about the tag deletement\n https://discord.gg/6PX24ZPnDt")
             else:
                 await ctx.send(f"Taq named `{tag}` doesn't exist!")
 
@@ -315,8 +315,8 @@ class core(commands.Cog):
                                        " command! Do `h.help` for detailed help of the command.")
                 else:
                     await ctx.send(":x: You can't delete that tag! If you are the owner or an admin"
-                               " of this server, please enter the support server and create ticket"
-                               " so we can whitelist you about the tag deletement\n https://discord.gg/6PX24ZPnDt")
+                                   " of this server, please enter the support server and create ticket"
+                                   " so we can whitelist you about the tag deletement\n https://discord.gg/6PX24ZPnDt")
             else:
                 await ctx.send(f"Tag named `{tag}` doesn't exist!")
 
