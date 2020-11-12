@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 import os
+import random
 
 
 class utility(commands.Cog):
@@ -61,8 +62,10 @@ class utility(commands.Cog):
 
     @commands.command(aliases=["shutup", "die"])
     async def fuckoff(self, ctx):
+        sad = ["goodbye cruel world :pensive: :v:", "why you do this to me :sob:", "broer...",
+               "fuck off i dont need you :rage:"]
         if ctx.author.id in self.client.admin_ids:
-            await ctx.send("goodbye cruel world :pensive: :v:")
+            await ctx.send(random.choice(sad))
             exit()
         else:
             return
