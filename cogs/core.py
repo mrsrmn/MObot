@@ -9,7 +9,7 @@ import time_utils
 start_time = datetime.datetime.utcnow()
 
 
-x = 1
+x = 0
 if x == 0:
     DIR = os.path.dirname(__file__)
     db = sqlite3.connect(os.path.join(DIR, "C:/Users/emirs/PycharmProjects/mobot/tags.db"))
@@ -54,7 +54,8 @@ class core(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
         sql.execute(f'create table if not exists "{guild.id}"("id" integer not null,'
-                    '"tags_name" text not null, "tags_content" text not null, "tags_date" integer not null)')
+                    '"tags_name" text not null, "tags_content" text not null, "tags_date" integer not null,'
+                    ' "usage_count" integer not null)')
 
     @commands.command(aliases=["add", "c"])
     async def create(self, ctx, name, *, content=None):
@@ -63,15 +64,16 @@ class core(commands.Cog):
             compensation = datetime.timedelta(hours=9)
             now = datetime.datetime.now() + compensation
 
-            sql.execute(f'select tags_name from "{ctx.guild.id}" where tags_name = "{name}"')
+            sql.execute(f'select tags_name from "773249498104201228" where tags_name = "{name}"')
             does_exist = sql.fetchone()
 
             if does_exist is not None:
                 await ctx.send(f"Taq named `{name}` already exists!")
             else:
                 if attachment and content is None:
-                    sql.execute(f'insert into "773249498104201228"(id, tags_name, tags_content, tags_date) '
-                                f'values(?,?,?,?)', (ctx.author.id, name, ctx.message.attachments[0].url, now))
+                    sql.execute(f'insert into "773249498104201228"(id, tags_name, tags_content, tags_date, usage_count,'
+                                f' usage_count) '
+                                f'values(?,?,?,?,?)', (ctx.author.id, name, ctx.message.attachments[0].url, now, 0))
                     db.commit()
                     await ctx.send(f":white_check_mark: Created taq with the name `{name}`")
                 else:
@@ -86,8 +88,9 @@ class core(commands.Cog):
                         await ctx.send(embed=embed)
                     else:
                         sql.execute(
-                            f'insert into "773249498104201228"(id, tags_name, tags_content, tags_date) values(?,?,?,?)',
-                            (ctx.author.id, name, content, now))
+                            f'insert into "773249498104201228"(id, tags_name, tags_content, tags_date, usage_count)'
+                            f' values(?,?,?,?,?)',
+                            (ctx.author.id, name, content, now, 0))
                         db.commit()
                         await ctx.send(f":white_check_mark: Created taq with the name `{name}`")
         else:
@@ -96,7 +99,8 @@ class core(commands.Cog):
             now = datetime.datetime.now() + compensation
 
             sql.execute(f'create table if not exists "{ctx.guild.id}"("id" integer not null,'
-                        '"tags_name" text not null, "tags_content" text not null, "tags_date" integer not null)')
+                        '"tags_name" text not null, "tags_content" text not null, "tags_date" integer not null,'
+                        ' "usage_count" integer not null)')
 
             sql.execute(f'select tags_name from "{ctx.guild.id}" where tags_name = "{name}"')
             does_exist = sql.fetchone()
@@ -105,8 +109,9 @@ class core(commands.Cog):
                 await ctx.send(f"Tag named `{name}` already exists!")
             else:
                 if attachment and content is None:
-                    sql.execute(f'insert into "{ctx.guild.id}"(id, tags_name, tags_content, tags_date) values(?,?,?,?)',
-                                (ctx.author.id, name, ctx.message.attachments[0].url, now))
+                    sql.execute(f'insert into "{ctx.guild.id}"(id, tags_name, tags_content, tags_date, usage_count)'
+                                f' values(?,?,?,?,?)',
+                                (ctx.author.id, name, ctx.message.attachments[0].url, now, 0))
                     db.commit()
                     await ctx.send(f":white_check_mark: Created tag with the name `{name}`")
                 else:
@@ -121,14 +126,19 @@ class core(commands.Cog):
                         await ctx.send(embed=embed)
                     else:
                         sql.execute(
-                            f'insert into "{ctx.guild.id}"(id, tags_name, tags_content, tags_date) values(?,?,?,?)',
-                            (ctx.author.id, name, content, now))
+                            f'insert into "{ctx.guild.id}"(id, tags_name, tags_content, tags_date, usage_count)'
+                            f' values(?,?,?,?,?)',
+                            (ctx.author.id, name, content, now, 0))
                         db.commit()
                         await ctx.send(f":white_check_mark: Created tag with the name `{name}`")
 
     @commands.command(aliases=["t", "taq"])
     async def tag(self, ctx, tag=None):
         if ctx.guild.id in self.client.epic_servers:
+            sql.execute(f'SELECT usage_count FROM "773249498104201228" WHERE tags_name= "{tag}"')
+            final = sql.fetchone()
+            finalup = final[0] + 1
+            print(finalup)
             if tag is None:
                 embed = discord.Embed(
                     title=":x: Command Raised an Exception!",
@@ -143,10 +153,18 @@ class core(commands.Cog):
                 final = sql.fetchone()
 
                 if final:
+                    sql.execute(
+                        f'UPDATE "773249498104201228" set usage_count = "{finalup}" '
+                        f'WHERE tags_name = "{tag}"')
                     await ctx.send(final[0])
                 else:
                     await ctx.send(f"Taq named `{tag}` doesn't exist!")
         else:
+            sql.execute(f'SELECT usage_count FROM "{ctx.guild.id}" WHERE tags_name= "{tag}"')
+            final = sql.fetchone()
+            finalup = final[0] + 1
+            print(finalup)
+
             if tag is None:
                 embed = discord.Embed(
                     title=":x: Command Raised an Exception!",
@@ -161,6 +179,9 @@ class core(commands.Cog):
                 final = sql.fetchone()
 
                 if final:
+                    sql.execute(
+                        f'UPDATE "{ctx.guild.id}" set usage_count = {int(finalup)} '
+                        f'WHERE tags_name = "{tag}"')
                     await ctx.send(final[0])
                 else:
                     await ctx.send(f"Tag named `{tag}` doesn't exist!")

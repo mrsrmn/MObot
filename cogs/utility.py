@@ -68,7 +68,7 @@ class utility(commands.Cog):
     async def sudo(self, ctx, *args):
         if ctx.author.id in self.client.admin_ids:
             if args[0] == "reload":
-                await ctx.send("reloadinq coqs lol")
+                await ctx.send("reloading cogs lol")
                 try:
                     for element in os.listdir("cogs"):
                         if element != "__pycache__":
@@ -77,10 +77,10 @@ class utility(commands.Cog):
                     await ctx.send("done :flushed:")
                 except Exception as e:
                     await ctx.send(repr(e))
-            elif args[0] == "servercount":
+            elif args[0] == "server-count":
                 await ctx.send(len(self.client.guilds))
             elif args[0] == "fuckoff" or args[0] == "die":
-                sad = ["goodbye cruel world :pensive: :v:", "why you do this to me :sob:", "broer...",
+                sad = ["goodbye cruel world :pensive: :v:", "why you do this to me :sob:", "bro...",
                        "fuck off i dont need you :rage:"]
                 await ctx.send(random.choice(sad))
                 exit()
