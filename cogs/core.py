@@ -22,9 +22,6 @@ elif x == 1:
 else:
     sql = None
 
-admin_ids = [444550944110149633, 429935667737264139, 603635602809946113]
-epic_servers = [773249498104201228, 713675042143076352]
-
 
 class core(commands.Cog):
 
@@ -61,7 +58,7 @@ class core(commands.Cog):
 
     @commands.command(aliases=["add", "c"])
     async def create(self, ctx, name, *, content=None):
-        if ctx.guild.id in epic_servers:
+        if ctx.guild.id in self.client.epic_servers:
             attachment = ctx.message.attachments
             compensation = datetime.timedelta(hours=9)
             now = datetime.datetime.now() + compensation
@@ -131,7 +128,7 @@ class core(commands.Cog):
 
     @commands.command(aliases=["t", "taq"])
     async def tag(self, ctx, tag=None):
-        if ctx.guild.id in epic_servers:
+        if ctx.guild.id in self.client.epic_servers:
             if tag is None:
                 embed = discord.Embed(
                     title=":x: Command Raised an Exception!",
@@ -171,7 +168,7 @@ class core(commands.Cog):
     @commands.has_permissions(manage_messages=True)
     @commands.command(aliases=["d"])
     async def delete(self, ctx, tag):
-        if ctx.guild.id in epic_servers:
+        if ctx.guild.id in self.client.epic_servers:
             user = ctx.author.id
             sql.execute(f'SELECT tags_content FROM "773249498104201228" WHERE tags_name= "{tag}"')
             final = sql.fetchone()
@@ -180,7 +177,7 @@ class core(commands.Cog):
             id1 = sql.fetchone()
 
             if final:
-                if id1[0] == user or ctx.author.id in admin_ids:
+                if id1[0] == user or ctx.author.id in self.client.admin_ids:
                     sql.execute(f'DELETE from "773249498104201228" where tags_name = "{tag}"')
                     db.commit()
                     await ctx.send(f"Taq named `{tag}` deleted successfully")
@@ -197,18 +194,20 @@ class core(commands.Cog):
             id1 = sql.fetchone()
 
             if final:
-                if id1[0] == user or ctx.author.id in admin_ids:
+                if id1[0] == user or ctx.author.id in self.client.admin_ids:
                     sql.execute(f'DELETE from "{ctx.guild.id}" where tags_name = "{tag}"')
                     db.commit()
                     await ctx.send(f"Tag named `{tag}` deleted successfully")
                 else:
-                    await ctx.send(":x: You can't delete that tag!")
+                    await ctx.send("":x: You can't delete that tag! If you are the owner or an admin"
+                               " of this server, please enter the support server and create ticket"
+                               " so we can whitelist you about the tag deletement\n https://discord.gg/6PX24ZPnDt")")
             else:
                 await ctx.send(f"Taq named `{tag}` doesn't exist!")
 
     @commands.command(aliases=["e"])
     async def edit(self, ctx, thinq, tag, *, value=None):
-        if ctx.guild.id in epic_servers:
+        if ctx.guild.id in self.client.epic_servers:
             attachment = ctx.message.attachments
             user = ctx.author.id
             sql.execute(f'SELECT tags_content FROM "773249498104201228" WHERE tags_name= "{tag}"')
@@ -218,7 +217,7 @@ class core(commands.Cog):
             id1 = sql.fetchone()
 
             if final:
-                if id1[0] == user or ctx.author.id in admin_ids:
+                if id1[0] == user or ctx.author.id in self.client.admin_ids:
                     if thinq.lower() == "content":
                         if attachment and value is None:
                             sql.execute(
@@ -260,7 +259,7 @@ class core(commands.Cog):
                         await ctx.send(":x: That is not the correct formatting of the"
                                        " command! Do `h.help` for detailed help of the command.")
                 else:
-                    await ctx.send(":x: You can't edit that tag!")
+                    await ctx.send(":x: You can't edit that taq!")
             else:
                 await ctx.send(f"Tag named `{tag}` doesn't exist!")
         else:
@@ -273,7 +272,7 @@ class core(commands.Cog):
             id1 = sql.fetchone()
 
             if final:
-                if id1[0] == user or ctx.author.id in admin_ids:
+                if id1[0] == user or ctx.author.id in self.client.admin_ids:
                     if thinq.lower() == "content":
                         if attachment and value is None:
                             sql.execute(
@@ -315,13 +314,15 @@ class core(commands.Cog):
                         await ctx.send(":x: That is not the correct formatting of the"
                                        " command! Do `h.help` for detailed help of the command.")
                 else:
-                    await ctx.send(":x: You can't edit that tag!")
+                    await ctx.send(":x: You can't delete that tag! If you are the owner or an admin"
+                               " of this server, please enter the support server and create ticket"
+                               " so we can whitelist you about the tag deletement\n https://discord.gg/6PX24ZPnDt")
             else:
                 await ctx.send(f"Tag named `{tag}` doesn't exist!")
 
     @commands.command(aliases=["l", "list"])
     async def _list(self, ctx):
-        if ctx.guild.id in epic_servers:
+        if ctx.guild.id in self.client.epic_servers:
             user = ctx.author.id
             sql.execute(f'SELECT tags_name FROM "773249498104201228" WHERE id = {user}')
             final = sql.fetchall()
@@ -380,7 +381,7 @@ class core(commands.Cog):
 
     @commands.command(aliases=["la"])
     async def listall(self, ctx):
-        if ctx.guild.id in epic_servers:
+        if ctx.guild.id in self.client.epic_servers:
             sql.execute(f'SELECT tags_name FROM "773249498104201228"')
             final = sql.fetchall()
             finalstr = str(final)
@@ -437,7 +438,7 @@ class core(commands.Cog):
 
     @commands.command()
     async def random(self, ctx):
-        if ctx.guild.id in epic_servers:
+        if ctx.guild.id in self.client.epic_servers:
             sql.execute(f'SELECT tags_name FROM "773249498104201228"')
             name = sql.fetchall()
             the = random.choice(name)
@@ -472,7 +473,7 @@ class core(commands.Cog):
 
     @commands.command(aliases=["i"])
     async def info(self, ctx, taq):
-        if ctx.guild.id in epic_servers:
+        if ctx.guild.id in self.client.epic_servers:
             sql.execute(f'SELECT id FROM "773249498104201228" WHERE tags_name = "{taq}"')
             ownerid = sql.fetchone()
 
@@ -515,7 +516,7 @@ class core(commands.Cog):
 
     @commands.command()
     async def about(self, ctx):
-        if ctx.guild.id in epic_servers:
+        if ctx.guild.id in self.client.epic_servers:
             sql.execute(f'SELECT tags_name FROM "773249498104201228"')
             final = sql.fetchall()
             finalcount = len(final)

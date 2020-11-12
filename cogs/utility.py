@@ -2,9 +2,6 @@ import discord
 from discord.ext import commands
 import os
 
-admin_ids = [444550944110149633, 429935667737264139, 603635602809946113]
-epic_servers = [773249498104201228, 713675042143076352]
-
 
 class utility(commands.Cog):
 
@@ -13,7 +10,7 @@ class utility(commands.Cog):
 
     @commands.command(aliases=["help", "h"])
     async def _help(self, ctx):
-        if ctx.guild.id in epic_servers:
+        if ctx.guild.id in self.client.epic_servers:
             embed = discord.Embed(
                 title="MOBot Help",
                 colour=discord.Colour.purple()
@@ -59,7 +56,7 @@ class utility(commands.Cog):
 
     @commands.command(aliases=["shutup", "die"])
     async def fuckoff(self, ctx):
-        if ctx.author.id in admin_ids:
+        if ctx.author.id in self.client.admin_ids:
             await ctx.send("goodbye cruel world :pensive: :v:")
             exit()
         else:
@@ -71,7 +68,7 @@ class utility(commands.Cog):
 
     @commands.command()
     async def reload(self, ctx):
-        if ctx.author.id in admin_ids:
+        if ctx.author.id in self.client.admin_ids:
             await ctx.send("reloadinq coqs lol")
             try:
                 for element in os.listdir("cogs"):
