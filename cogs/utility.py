@@ -92,14 +92,15 @@ class utility(commands.Cog):
         human = self.client.get_user(429935667737264139)
         lunah = self.client.get_user(603635602809946113)
         embed = discord.Embed(
-            title="MOBot Credits",
+            title=":busts_in_silhouette: MOBot Credits",
             description="These are the epic people who made MOBot possible",
             colour=discord.Colour.purple()
         )
-        embed.add_field(name="Developer:", value=makufon)
-        embed.add_field(name="Special Thanks:", value=f"{lunah}\n{human}")
-        embed.add_field(name="Library:", value=f"discord.py {discord.__version__}")
-        embed.add_field(name="DB Used:", value="SQLite")
+        embed.add_field(name="<:4228_discord_bot_dev:727548651001348196> Developer:", value=makufon)
+        embed.add_field(name=":star: Special Thanks:", value=f"{lunah}\n{human}")
+        embed.add_field(name=":computer: Library:", value=f"discord.py {discord.__version__}")
+        embed.add_field(name=":floppy_disk:  DB Used:", value="SQLite")
+        embed.set_footer(text="Bots name and icon by GD level MO by MenhHue and Knots (ID: 62090339)")
         await ctx.send(embed=embed)
 
     @commands.command()
