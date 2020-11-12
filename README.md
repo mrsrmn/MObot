@@ -9,7 +9,7 @@ MO is a tag bot made with discord.py (Python) and SQLite
 * list - Gives a list of the tags you've created
 * listall - Gives a list of the tags (all of them)
 * pinq - Gives the latency
-* info <tag> - Gives info about a taq
+* info <tag> - Gives info about a tag
 * about - About the bot
 * random - Gives a random tag
 * credits - Bots credits
