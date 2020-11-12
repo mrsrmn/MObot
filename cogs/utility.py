@@ -60,39 +60,30 @@ class utility(commands.Cog):
                                     "03/c32e9d106e4204ca6e68f2ec5b959c32.webp?size=1024")
             await ctx.send(embed=embed)
 
-    @commands.command(aliases=["shutup", "die"])
-    async def fuckoff(self, ctx):
-        sad = ["goodbye cruel world :pensive: :v:", "why you do this to me :sob:", "broer...",
-               "fuck off i dont need you :rage:"]
-        if ctx.author.id in self.client.admin_ids:
-            await ctx.send(random.choice(sad))
-            exit()
-        else:
-            return
-
     @commands.command(aliases=["ping"])
     async def pinq(self, ctx):
         await ctx.send(f"**{round(self.client.latency * 1000)}ms**")
 
     @commands.command()
-    async def reload(self, ctx):
+    async def sudo(self, ctx, *args):
         if ctx.author.id in self.client.admin_ids:
-            await ctx.send("reloadinq coqs lol")
-            try:
-                for element in os.listdir("cogs"):
-                    if element != "__pycache__":
-                        self.client.unload_extension(f"cogs.{element.replace('.py', '')}")
-                        self.client.load_extension(f"cogs.{element.replace('.py', '')}")
-                await ctx.send("done :flushed:")
-            except Exception as e:
-                await ctx.send(repr(e))
-        else:
-            return
-
-    @commands.command(aliases=["servers"])
-    async def servercount(self, ctx):
-        if ctx.author.id in self.client.admin_ids:
-            await ctx.send(len(self.client.guilds))
+            if args[0] == "reload":
+                await ctx.send("reloadinq coqs lol")
+                try:
+                    for element in os.listdir("cogs"):
+                        if element != "__pycache__":
+                            self.client.unload_extension(f"cogs.{element.replace('.py', '')}")
+                            self.client.load_extension(f"cogs.{element.replace('.py', '')}")
+                    await ctx.send("done :flushed:")
+                except Exception as e:
+                    await ctx.send(repr(e))
+            elif args[0] == "servercount":
+                await ctx.send(len(self.client.guilds))
+            elif args[0] == "fuckoff" or args[0] == "die":
+                sad = ["goodbye cruel world :pensive: :v:", "why you do this to me :sob:", "broer...",
+                       "fuck off i dont need you :rage:"]
+                await ctx.send(random.choice(sad))
+                exit()
         else:
             return
 
