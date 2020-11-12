@@ -207,7 +207,7 @@ class core(commands.Cog):
                 await ctx.send(f"Taq named `{tag}` doesn't exist!")
 
     @commands.command(aliases=["e"])
-    async def edit(self, ctx, thinq, tag, *, content=None):
+    async def edit(self, ctx, thinq, tag, *, value=None):
         if ctx.guild.id in epic_servers:
             attachment = ctx.message.attachments
             user = ctx.author.id
@@ -220,40 +220,40 @@ class core(commands.Cog):
             if final:
                 if id1[0] == user or ctx.author.id in admin_ids:
                     if thinq.lower() == "content":
-                        if attachment and content is None:
+                        if attachment and value is None:
                             sql.execute(
                                 f'UPDATE "773249498104201228" set tags_content = "{ctx.message.attachments[0].url}" '
                                 f'WHERE tags_name = "{tag}"')
                             db.commit()
                             await ctx.send(f"Tag named `{tag}` edited successfully")
                         else:
-                            if content is None:
+                            if value is None:
                                 embed = discord.Embed(
                                     title=":x: Command Raised an Exception!",
                                     color=0xff0000
                                 )
                                 embed.add_field(name="Error:",
-                                                value=f"```content is a required argument that is missing```")
+                                                value=f"```value is a required argument that is missing```")
                                 embed.set_footer(text=f"MissingRequiredArgument | Occurred in: {ctx.command}")
                                 await ctx.send(embed=embed)
                             else:
                                 sql.execute(f'UPDATE "773249498104201228"'
-                                            f' set tags_content = "{content}" WHERE tags_name = "{tag}"')
+                                            f' set tags_content = "{value}" WHERE tags_name = "{tag}"')
                                 db.commit()
                                 await ctx.send(f"Tag named `{tag}` edited successfully")
                     elif thinq.lower() == "name":
-                        if content is None:
+                        if value is None:
                             embed = discord.Embed(
                                 title=":x: Command Raised an Exception!",
                                 color=0xff0000
                             )
                             embed.add_field(name="Error:",
-                                            value=f"```content is a required argument that is missing```")
+                                            value=f"```value is a required argument that is missing```")
                             embed.set_footer(text=f"MissingRequiredArgument | Occurred in: {ctx.command}")
                             await ctx.send(embed=embed)
                         else:
                             sql.execute(
-                                f'UPDATE "773249498104201228" set tags_name = "{content}" WHERE tags_name = "{tag}"')
+                                f'UPDATE "773249498104201228" set tags_name = "{value}" WHERE tags_name = "{tag}"')
                             db.commit()
                             await ctx.send(f"Tag named `{tag}` edited successfully")
                     else:
@@ -275,14 +275,14 @@ class core(commands.Cog):
             if final:
                 if id1[0] == user or ctx.author.id in admin_ids:
                     if thinq.lower() == "content":
-                        if attachment and content is None:
+                        if attachment and value is None:
                             sql.execute(
                                 f'UPDATE "{ctx.guild.id}" set tags_content = "{ctx.message.attachments[0].url}" '
                                 f'WHERE tags_name = "{tag}"')
                             db.commit()
                             await ctx.send(f"Tag named `{tag}` edited successfully")
                         else:
-                            if content is None:
+                            if value is None:
                                 embed = discord.Embed(
                                     title=":x: Command Raised an Exception!",
                                     color=0xff0000
@@ -293,11 +293,11 @@ class core(commands.Cog):
                                 await ctx.send(embed=embed)
                             else:
                                 sql.execute(f'UPDATE "{ctx.guild.id}"'
-                                            f' set tags_content = "{content}" WHERE tags_name = "{tag}"')
+                                            f' set tags_content = "{value}" WHERE tags_name = "{tag}"')
                                 db.commit()
                                 await ctx.send(f"Tag named `{tag}` edited successfully")
                     elif thinq.lower() == "name":
-                        if content is None:
+                        if value is None:
                             embed = discord.Embed(
                                 title=":x: Command Raised an Exception!",
                                 color=0xff0000
@@ -308,7 +308,7 @@ class core(commands.Cog):
                             await ctx.send(embed=embed)
                         else:
                             sql.execute(
-                                f'UPDATE "{ctx.guild.id}" set tags_name = "{content}" WHERE tags_name = "{tag}"')
+                                f'UPDATE "{ctx.guild.id}" set tags_name = "{value}" WHERE tags_name = "{tag}"')
                             db.commit()
                             await ctx.send(f"Tag named `{tag}` edited successfully")
                     else:

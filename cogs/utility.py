@@ -21,7 +21,8 @@ class utility(commands.Cog):
             embed.add_field(name="taq <taq>", value="Shows you the specified taq")
             embed.add_field(name="create <name> <content>", value="Creates a taq")
             embed.add_field(name="delete <taq>", value="Deletes a taq")
-            embed.add_field(name="edit <name/content> <taq> <content>", value="Edits a taq you own")
+            embed.add_field(name="edit <name/content> <taq> <value>", value="Edits the name or the content of "
+                                                                            "a taq you own")
             embed.add_field(name="list", value="Qives a list of the taqs you've created")
             embed.add_field(name="listall", value="Qives a list of the taqs (all of them)")
             embed.add_field(name="pinq", value="Qives the latency")
@@ -43,7 +44,8 @@ class utility(commands.Cog):
             embed.add_field(name="tag <tag>", value="Shows you the specified tag")
             embed.add_field(name="create <name> <content>", value="Creates a tag")
             embed.add_field(name="delete <tag>", value="Deletes a tag")
-            embed.add_field(name="edit <name/content> <tag> <content>", value="Edits a tag you own")
+            embed.add_field(name="edit <name/content> <tag> <value>", value="Edits the name or the content of "
+                                                                            "a tag you own")
             embed.add_field(name="list", value="Gives a list of the tags you've created")
             embed.add_field(name="listall", value="Gives a list of the tags (all of them)")
             embed.add_field(name="ping", value="Gives the latency")
