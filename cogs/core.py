@@ -71,9 +71,8 @@ class core(commands.Cog):
                 await ctx.send(f"Taq named `{name}` already exists!")
             else:
                 if attachment and content is None:
-                    sql.execute(f'insert into "773249498104201228"(id, tags_name, tags_content, tags_date, usage_count,'
-                                f' usage_count) '
-                                f'values(?,?,?,?,?)', (ctx.author.id, name, ctx.message.attachments[0].url, now, 0))
+                    sql.execute(f'insert into "773249498104201228"(id, tags_name, tags_content, tags_date, usage_count)'
+                                f'values(?,?,?,?,?)', (ctx.author.id, name, ctx.message.attachments[0].url, now, 0)),
                     db.commit()
                     await ctx.send(f":white_check_mark: Created taq with the name `{name}`")
                 else:
@@ -89,8 +88,7 @@ class core(commands.Cog):
                     else:
                         sql.execute(
                             f'insert into "773249498104201228"(id, tags_name, tags_content, tags_date, usage_count)'
-                            f' values(?,?,?,?,?)',
-                            (ctx.author.id, name, content, now, 0))
+                            f' values(?,?,?,?,?)', (ctx.author.id, name, content, now, 0))
                         db.commit()
                         await ctx.send(f":white_check_mark: Created taq with the name `{name}`")
         else:
@@ -136,9 +134,8 @@ class core(commands.Cog):
     async def tag(self, ctx, tag=None):
         if ctx.guild.id in self.client.epic_servers:
             sql.execute(f'SELECT usage_count FROM "773249498104201228" WHERE tags_name= "{tag}"')
-            final = sql.fetchone()
-            finaluc = final[0] + 1
-            finalup = int(finaluc)
+            finalf = sql.fetchone()
+            finaluc = int(finalf[0]) + 1
 
             if tag is None:
                 embed = discord.Embed(
@@ -146,21 +143,22 @@ class core(commands.Cog):
                     color=0xff0000
                 )
                 embed.add_field(name="Error:",
-                                value=f"```taq is a required argument that is missing```")
+                                value=f"```tag is a required argument that is missing```")
                 embed.set_footer(text=f"MissingRequiredArgument | Occurred in: {ctx.command}")
                 await ctx.send(embed=embed)
             else:
                 sql.execute(f'SELECT tags_content FROM "773249498104201228" WHERE tags_name= "{tag}"')
                 final = sql.fetchone()
+                print(final)
 
                 if final:
                     sql.execute(
-                        f'UPDATE "773249498104201228" set usage_count = "{finalup}" '
+                        f'UPDATE "773249498104201228" set usage_count = "{finaluc}" '
                         f'WHERE tags_name = "{tag}"')
-                    db.commit()
                     await ctx.send(final[0])
+                    db.commit()
                 else:
-                    await ctx.send(f"Taq named `{tag}` doesn't exist!")
+                    await ctx.send(f"Tag named `{tag}` doesn't exist!")
         else:
             sql.execute(f'SELECT usage_count FROM "{ctx.guild.id}" WHERE tags_name= "{tag}"')
             final = sql.fetchone()
