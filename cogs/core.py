@@ -206,7 +206,7 @@ class core(commands.Cog):
                 await ctx.send(f"Taq named `{tag}` doesn't exist!")
 
     @commands.command(aliases=["e"])
-    async def edit(self, ctx, thinq, tag, *, value=None):
+    async def edit(self, ctx, thing, tag, *, value=None):
         if ctx.guild.id in self.client.epic_servers:
             attachment = ctx.message.attachments
             user = ctx.author.id
@@ -218,7 +218,7 @@ class core(commands.Cog):
 
             if final:
                 if id1[0] == user or ctx.author.id in self.client.admin_ids:
-                    if thinq.lower() == "content":
+                    if thing.lower() == "content":
                         if attachment and value is None:
                             sql.execute(
                                 f'UPDATE "773249498104201228" set tags_content = "{ctx.message.attachments[0].url}" '
@@ -240,7 +240,7 @@ class core(commands.Cog):
                                             f' set tags_content = "{value}" WHERE tags_name = "{tag}"')
                                 db.commit()
                                 await ctx.send(f"Tag named `{tag}` edited successfully")
-                    elif thinq.lower() == "name":
+                    elif thing.lower() == "name":
                         if value is None:
                             embed = discord.Embed(
                                 title=":x: Command Raised an Exception!",
@@ -273,7 +273,7 @@ class core(commands.Cog):
 
             if final:
                 if id1[0] == user or ctx.author.id in self.client.admin_ids:
-                    if thinq.lower() == "content":
+                    if thing.lower() == "content":
                         if attachment and value is None:
                             sql.execute(
                                 f'UPDATE "{ctx.guild.id}" set tags_content = "{ctx.message.attachments[0].url}" '
@@ -295,7 +295,7 @@ class core(commands.Cog):
                                             f' set tags_content = "{value}" WHERE tags_name = "{tag}"')
                                 db.commit()
                                 await ctx.send(f"Tag named `{tag}` edited successfully")
-                    elif thinq.lower() == "name":
+                    elif thing.lower() == "name":
                         if value is None:
                             embed = discord.Embed(
                                 title=":x: Command Raised an Exception!",
