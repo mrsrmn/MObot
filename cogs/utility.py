@@ -30,6 +30,7 @@ class utility(commands.Cog):
             embed.add_field(name="invite", value="Invite link for MO")
             embed.add_field(name="support", value="Support server for MO")
             embed.add_field(name="vote", value="Vote link for MO")
+            embed.add_field(name="patreon", value="Patreon page link for MO")
             embed.set_thumbnail(url="https://cdn.discordapp.com/avatars/7738394075969618"
                                     "03/c32e9d106e4204ca6e68f2ec5b959c32.webp?size=1024")
             await ctx.send(embed=embed)
@@ -50,6 +51,10 @@ class utility(commands.Cog):
             embed.add_field(name="about", value="About the bot")
             embed.add_field(name="random", value="Gives a random tag")
             embed.add_field(name="credits", value="Bots credits")
+            embed.add_field(name="invite", value="Invite link for MO")
+            embed.add_field(name="support", value="Support server for MO")
+            embed.add_field(name="vote", value="Vote link for MO")
+            embed.add_field(name="patreon", value="Patreon page link for MO")
             embed.set_thumbnail(url="https://cdn.discordapp.com/avatars/7738394075969618"
                                     "03/c32e9d106e4204ca6e68f2ec5b959c32.webp?size=1024")
             await ctx.send(embed=embed)
@@ -108,6 +113,11 @@ class utility(commands.Cog):
     @commands.command()
     async def vote(self, ctx):
         await ctx.send("**Here is the vote link for MO:** https://top.gg/bot/773839407596961803/vote")
+
+    @commands.command()
+    async def patreon(self, ctx):
+        await ctx.send("**Here is our Patreon page, I put a lot of time in the bot and would appreciate your support.**"
+                       "\nhttps://www.patreon.com/mobot")
 
 
 def setup(client):
