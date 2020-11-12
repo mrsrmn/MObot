@@ -87,7 +87,14 @@ class utility(commands.Cog):
             except Exception as e:
                 await ctx.send(repr(e))
         else:
-            await ctx.send("you cant use that :rage:")
+            return
+
+    @commands.command(aliases=["servers"])
+    async def servercount(self, ctx):
+        if ctx.author.id in self.client.admin_ids:
+            await ctx.send(len(self.client.guilds))
+        else:
+            return
 
     @commands.command()
     async def credits(self, ctx):
