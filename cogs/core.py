@@ -137,8 +137,9 @@ class core(commands.Cog):
         if ctx.guild.id in self.client.epic_servers:
             sql.execute(f'SELECT usage_count FROM "773249498104201228" WHERE tags_name= "{tag}"')
             final = sql.fetchone()
-            finalup = final[0] + 1
-            print(finalup)
+            finaluc = final[0] + 1
+            finalup = int(finaluc)
+
             if tag is None:
                 embed = discord.Embed(
                     title=":x: Command Raised an Exception!",
@@ -156,14 +157,15 @@ class core(commands.Cog):
                     sql.execute(
                         f'UPDATE "773249498104201228" set usage_count = "{finalup}" '
                         f'WHERE tags_name = "{tag}"')
+                    db.commit()
                     await ctx.send(final[0])
                 else:
                     await ctx.send(f"Taq named `{tag}` doesn't exist!")
         else:
             sql.execute(f'SELECT usage_count FROM "{ctx.guild.id}" WHERE tags_name= "{tag}"')
             final = sql.fetchone()
-            finalup = final[0] + 1
-            print(finalup)
+            finaluc = final[0] + 1
+            finalup = int(finaluc)
 
             if tag is None:
                 embed = discord.Embed(
@@ -180,9 +182,10 @@ class core(commands.Cog):
 
                 if final:
                     sql.execute(
-                        f'UPDATE "{ctx.guild.id}" set usage_count = {int(finalup)} '
+                        f'UPDATE "{ctx.guild.id}" set usage_count = "{finalup}" '
                         f'WHERE tags_name = "{tag}"')
                     await ctx.send(final[0])
+                    db.commit()
                 else:
                     await ctx.send(f"Tag named `{tag}` doesn't exist!")
 
@@ -504,6 +507,9 @@ class core(commands.Cog):
             sql.execute(f'SELECT tags_content FROM "773249498104201228" WHERE tags_name= "{taq}"')
             content = sql.fetchone()
 
+            sql.execute(f'SELECT usage_count FROM "773249498104201228" WHERE tags_name= "{taq}"')
+            count = sql.fetchone()
+
             if content:
                 embed = discord.Embed(
                     title=f"Taq Info of {taq}",
@@ -511,6 +517,7 @@ class core(commands.Cog):
                 )
                 embed.add_field(name="Owner:", value=f"<@{ownerid[0]}>")
                 embed.add_field(name="Creation Date:", value=date[0][:-7])
+                embed.add_field(name="Times it got used:", value=count[0])
                 await ctx.send(embed=embed)
             else:
                 await ctx.send(":x: That taq doesn't seem to exist!")
@@ -524,6 +531,9 @@ class core(commands.Cog):
             sql.execute(f'SELECT tags_content FROM "{ctx.guild.id}" WHERE tags_name= "{taq}"')
             content = sql.fetchone()
 
+            sql.execute(f'SELECT usage_count FROM "{ctx.guild.id}" WHERE tags_name= "{taq}"')
+            count = sql.fetchone()
+
             if content:
                 embed = discord.Embed(
                     title=f"Tag Info of {taq}",
@@ -531,6 +541,7 @@ class core(commands.Cog):
                 )
                 embed.add_field(name="Owner:", value=f"<@{ownerid[0]}>")
                 embed.add_field(name="Creation Date:", value=date[0][:-7])
+                embed.add_field(name="Times it got used:", value=count[0])
                 await ctx.send(embed=embed)
             else:
                 await ctx.send(":x: That tag doesn't seem to exist!")
