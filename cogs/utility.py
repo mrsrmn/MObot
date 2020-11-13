@@ -9,8 +9,8 @@ class utility(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    @commands.command(aliases=["help", "h"])
-    async def _help(self, ctx):
+    @commands.command(aliases=["h"])
+    async def help(self, ctx):
         if ctx.guild.id in self.client.epic_servers:
             embed = discord.Embed(
                 title="MOBot Help",

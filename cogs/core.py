@@ -10,7 +10,7 @@ from difflib import SequenceMatcher
 start_time = datetime.datetime.utcnow()
 
 
-x = 0
+x = 1
 if x == 0:
     DIR = os.path.dirname(__file__)
     db = sqlite3.connect(os.path.join(DIR, "C:/Users/emirs/PycharmProjects/mobot/tags.db"))
@@ -367,8 +367,8 @@ class core(commands.Cog):
             else:
                 await ctx.send(f"Tag named `{tag}` doesn't exist!")
 
-    @commands.command(aliases=["l", "list"])
-    async def _list(self, ctx):
+    @commands.command(aliases=["l"])
+    async def list(self, ctx):
         if ctx.guild.id in self.client.epic_servers:
             user = ctx.author.id
             sql.execute(f'SELECT tags_name FROM "773249498104201228" WHERE id = {user}')
