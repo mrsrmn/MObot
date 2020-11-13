@@ -6,11 +6,12 @@ import os
 import random
 import time_utils
 from discord.ext.commands.cooldowns import BucketType
+from difflib import SequenceMatcher
 
 start_time = datetime.datetime.utcnow()
 
 
-x = 0
+x = 1
 if x == 0:
     DIR = os.path.dirname(__file__)
     db = sqlite3.connect(os.path.join(DIR, "C:/Users/emirs/PycharmProjects/mobot/tags.db"))
@@ -39,13 +40,35 @@ class core(commands.Cog):
             embed.add_field(name="Error:", value=f"```{error}```")
             embed.set_footer(text=f"{error.__class__.__name__} | Occurred in: {ctx.command}")
             await ctx.send(embed=embed)
-        if isinstance(error, commands.MissingPermissions):
+        elif isinstance(error, commands.MissingPermissions):
             embed = discord.Embed(
                 title=":x: Command Raised an Exception!",
                 color=0xff0000
             )
             embed.add_field(name="Error:", value=f"**You don't have enough permissions to do that!")
             embed.set_footer(text=f"{error.__class__.__name__} | Occurred in: {ctx.command}")
+            await ctx.send(embed=embed)
+        elif isinstance(error, commands.CommandNotFound):
+            suggestion = None
+            for command in self.client.all_commands:
+                if self.client.all_commands[command].enabled and not self.client.all_commands[command].hidden:
+                    ratio = round(SequenceMatcher(a=str(ctx.invoked_with).lower(), b=command).ratio(),
+                                  1)
+                    if ratio >= 0.7:
+                        suggestion = command
+                        break
+            if suggestion is None:
+                embed = discord.Embed(
+                    title=":x: Command not found",
+                    colour=discord.Colour.purple(),
+                    description=f"That command doesn't exist! Use `h?help` for a list of commands."
+                )
+            else:
+                embed = discord.Embed(
+                    title=":x: Command not found",
+                    colour=discord.Colour.purple(),
+                    description=f"That command doesn't exist! Did you mean `h?{suggestion}`?"
+                )
             await ctx.send(embed=embed)
 
     @commands.Cog.listener()
@@ -135,10 +158,6 @@ class core(commands.Cog):
     @commands.command(aliases=["t", "taq"])
     async def tag(self, ctx, tag=None):
         if ctx.guild.id in self.client.epic_servers:
-            sql.execute(f'SELECT usage_count FROM "773249498104201228" WHERE tags_name= "{tag}"')
-            finalf = sql.fetchone()
-            finaluc = int(finalf[0]) + 1
-
             if tag is None:
                 embed = discord.Embed(
                     title=":x: Command Raised an Exception!",
@@ -149,6 +168,10 @@ class core(commands.Cog):
                 embed.set_footer(text=f"MissingRequiredArgument | Occurred in: {ctx.command}")
                 await ctx.send(embed=embed)
             else:
+                sql.execute(f'SELECT usage_count FROM "773249498104201228" WHERE tags_name= "{tag}"')
+                finalf = sql.fetchone()
+                finaluc = int(finalf[0]) + 1
+
                 sql.execute(f'SELECT tags_content FROM "773249498104201228" WHERE tags_name= "{tag}"')
                 final = sql.fetchone()
 
@@ -158,14 +181,9 @@ class core(commands.Cog):
                         f'WHERE tags_name = "{tag}"')
                     await ctx.send(final[0])
                     db.commit()
-                else:
+                elif final is None and finalf and None:
                     await ctx.send(f"Tag named `{tag}` doesn't exist!")
         else:
-            sql.execute(f'SELECT usage_count FROM "{ctx.guild.id}" WHERE tags_name= "{tag}"')
-            final = sql.fetchone()
-            finaluc = final[0] + 1
-            finalup = int(finaluc)
-
             if tag is None:
                 embed = discord.Embed(
                     title=":x: Command Raised an Exception!",
@@ -176,6 +194,11 @@ class core(commands.Cog):
                 embed.set_footer(text=f"MissingRequiredArgument | Occurred in: {ctx.command}")
                 await ctx.send(embed=embed)
             else:
+                sql.execute(f'SELECT usage_count FROM "{ctx.guild.id}" WHERE tags_name= "{tag}"')
+                finalf = sql.fetchone()
+                finaluc = finalf[0] + 1
+                finalup = int(finaluc)
+
                 sql.execute(f'SELECT tags_content FROM "{ctx.guild.id}" WHERE tags_name= "{tag}"')
                 final = sql.fetchone()
 
@@ -185,7 +208,7 @@ class core(commands.Cog):
                         f'WHERE tags_name = "{tag}"')
                     await ctx.send(final[0])
                     db.commit()
-                else:
+                elif final is None:
                     await ctx.send(f"Tag named `{tag}` doesn't exist!")
 
     @commands.has_permissions(manage_messages=True)
