@@ -5,13 +5,12 @@ import sqlite3
 import os
 import random
 import time_utils
-from discord.ext.commands.cooldowns import BucketType
 from difflib import SequenceMatcher
 
 start_time = datetime.datetime.utcnow()
 
 
-x = 1
+x = 0
 if x == 0:
     DIR = os.path.dirname(__file__)
     db = sqlite3.connect(os.path.join(DIR, "C:/Users/emirs/PycharmProjects/mobot/tags.db"))
@@ -60,16 +59,18 @@ class core(commands.Cog):
             if suggestion is None:
                 embed = discord.Embed(
                     title=":x: Command not found",
-                    colour=discord.Colour.purple(),
-                    description=f"That command doesn't exist! Use `h?help` for a list of commands."
+                    color=0xff0000,
+                    description=f"That command doesn't exist! Use `h.help` for a list of commands."
                 )
             else:
                 embed = discord.Embed(
                     title=":x: Command not found",
-                    colour=discord.Colour.purple(),
-                    description=f"That command doesn't exist! Did you mean `h?{suggestion}`?"
+                    color=0xff0000,
+                    description=f"That command doesn't exist! Did you mean `h.{suggestion}`?"
                 )
             await ctx.send(embed=embed)
+        elif isinstance(error, commands.CommandOnCooldown):
+            await ctx.send(f":clock5: That command is on cooldown. Try again in **{int(error.retry_after)}** seconds!")
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -154,7 +155,7 @@ class core(commands.Cog):
                         db.commit()
                         await ctx.send(f":white_check_mark: Created tag with the name `{name}`")
 
-    @commands.cooldown(2, 5, BucketType.member)
+    @commands.cooldown(2, 5, commands.BucketType.member)
     @commands.command(aliases=["t", "taq"])
     async def tag(self, ctx, tag=None):
         if ctx.guild.id in self.client.epic_servers:
@@ -482,7 +483,7 @@ class core(commands.Cog):
                 embed.set_footer(text=f"Taq Count: {finalcount}")
                 await ctx.send(embed=embed)
 
-    @commands.cooldown(2, 5, BucketType.member)
+    @commands.cooldown(2, 5, commands.BucketType.member)
     @commands.command()
     async def random(self, ctx):
         if ctx.guild.id in self.client.epic_servers:
