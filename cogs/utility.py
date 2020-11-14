@@ -64,7 +64,7 @@ class utility(commands.Cog):
     async def pinq(self, ctx):
         await ctx.send(f"**{round(self.client.latency * 1000)}ms**")
 
-    @commands.command()
+    @commands.command(hidden=True)
     async def sudo(self, ctx, *args):
         if ctx.author.id in self.client.admin_ids:
             if args[0] == "reload":
@@ -84,6 +84,8 @@ class utility(commands.Cog):
                        "fuck off i dont need you :rage:"]
                 await ctx.send(random.choice(sad))
                 exit()
+            elif args[0] == "h":
+                await ctx.send("hhhhhhhhhhhhh")
         else:
             return
 
