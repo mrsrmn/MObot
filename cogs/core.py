@@ -316,10 +316,13 @@ class core(commands.Cog):
                 if id1[0] == user or ctx.author.id in self.client.admin_ids:
                     if thing.lower() == "content":
                         if attachment and value is None:
-                            sql.execute(
-                                f'UPDATE "773249498104201228" set tags_content = "{ctx.message.attachments[0].url}" '
-                                f'WHERE tags_name = "{tag}"')
-                            db.commit()
+                            async with ctx.channel.typing():
+                                image_url = ctx.message.attachments[0].url
+                                image = imgurclient.upload_from_url(image_url, config=None, anon=True)
+                                sql.execute(
+                                    f'UPDATE "773249498104201228" set tags_content = "{image["link"]}" '
+                                    f'WHERE tags_name = "{tag}"')
+                                db.commit()
                             await ctx.send(f"Tag named `{tag}` edited successfully")
                         else:
                             if value is None:
@@ -371,10 +374,13 @@ class core(commands.Cog):
                 if id1[0] == user or ctx.author.id in self.client.admin_ids:
                     if thing.lower() == "content":
                         if attachment and value is None:
-                            sql.execute(
-                                f'UPDATE "{ctx.guild.id}" set tags_content = "{ctx.message.attachments[0].url}" '
-                                f'WHERE tags_name = "{tag}"')
-                            db.commit()
+                            async with ctx.channel.typing():
+                                image_url = ctx.message.attachments[0].url
+                                image = imgurclient.upload_from_url(image_url, config=None, anon=True)
+                                sql.execute(
+                                    f'UPDATE "{ctx.guild.id}" set tags_content = "{image["link"]}" '
+                                    f'WHERE tags_name = "{tag}"')
+                                db.commit()
                             await ctx.send(f"Tag named `{tag}` edited successfully")
                         else:
                             if value is None:
