@@ -6,14 +6,27 @@ import os
 import random
 import time_utils
 from difflib import SequenceMatcher
+from imgurpython import ImgurClient
+from imgurpython.helpers.error import ImgurClientError
+from pathlib import Path
+from dotenv import load_dotenv
+
+env_path = Path(".") / ".env"
+load_dotenv(dotenv_path=env_path)
+
+client_id = os.getenv("CLIENT_ID")
+client_secret = os.getenv("CLIENT_SECRET")
+
+imgurclient = ImgurClient(client_id, client_secret)
+
 
 start_time = datetime.datetime.utcnow()
 
 
-x = 1
+x = 0
 if x == 0:
     DIR = os.path.dirname(__file__)
-    db = sqlite3.connect(os.path.join(DIR, "C:/Users/emirs/PycharmProjects/mobot/tags.db"))
+    db = sqlite3.connect(os.path.join(DIR, "C:/Users/emirs/PycharmProjects/MObot/tags.db"))
     sql = db.cursor()
 elif x == 1:
     print("# VPS MODE")
@@ -51,8 +64,7 @@ class core(commands.Cog):
             suggestion = None
             for command in self.client.all_commands:
                 if self.client.all_commands[command].enabled and not self.client.all_commands[command].hidden:
-                    ratio = round(SequenceMatcher(a=str(ctx.invoked_with).lower(), b=command).ratio(),
-                                  1)
+                    ratio = round(SequenceMatcher(a=str(ctx.invoked_with).lower(), b=command).ratio(), 1)
                     if ratio >= 0.7:
                         suggestion = command
                         break
@@ -96,10 +108,28 @@ class core(commands.Cog):
                 await ctx.send(f"Taq named `{name}` already exists!")
             else:
                 if attachment and content is None:
-                    sql.execute(f'insert into "773249498104201228"(id, tags_name, tags_content, tags_date, usage_count)'
-                                f'values(?,?,?,?,?)', (ctx.author.id, name, ctx.message.attachments[0].url, now, 0)),
-                    db.commit()
-                    await ctx.send(f":white_check_mark: Created taq with the name `{name}`")
+                    image_url = f"{ctx.message.attachments[0].url}"
+
+                    try:
+                        image = imgurclient.upload_from_url(image_url, config=None, anon=True)
+
+                        sql.execute(
+                            f'insert into "773249498104201228"(id, tags_name, tags_content, tags_date, usage_count)'
+                            f'values(?,?,?,?,?)', (ctx.author.id, name, image["link"], now, 0)),
+                        db.commit()
+
+                        await ctx.send(f":white_check_mark: Created taq with the name `{name}`")
+                    except ImgurClientError as e:
+                        channel = self.client.get_channel(713675042143076356)
+                        await channel.send(f"IMGUR API BRUTAL ERROR\n"
+                                           f"```{e.error_message} / {e.status_code}```\n"
+                                           f"<@444550944110149633>")
+                        sql.execute(
+                            f'insert into "773249498104201228"(id, tags_name, tags_content, tags_date, usage_count)'
+                            f'values(?,?,?,?,?)', (ctx.author.id, name, ctx.message.attachments[0].url, now, 0)),
+                        db.commit()
+
+                        await ctx.send(f":white_check_mark: Created taq with the name `{name}`")
                 else:
                     if content is None:
                         embed = discord.Embed(
