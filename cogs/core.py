@@ -92,7 +92,7 @@ class core(commands.Cog):
     async def on_guild_join(self, guild):
         sql.execute(f'create table if not exists "{guild.id}"("id" integer not null,'
                     '"tags_name" text not null, "tags_content" text not null, "tags_date" integer not null,'
-                    ' "usage_count" integer not null)')
+                    ' "usage_count" integer not null')
 
     @commands.command(aliases=["add", "c"])
     async def create(self, ctx, name, *, content=None):
@@ -111,12 +111,13 @@ class core(commands.Cog):
                     image_url = f"{ctx.message.attachments[0].url}"
 
                     try:
-                        image = imgurclient.upload_from_url(image_url, config=None, anon=True)
+                        async with ctx.channel.typing():
+                            image = imgurclient.upload_from_url(image_url, config=None, anon=True)
 
-                        sql.execute(
-                            f'insert into "773249498104201228"(id, tags_name, tags_content, tags_date, usage_count)'
-                            f'values(?,?,?,?,?)', (ctx.author.id, name, image["link"], now, 0)),
-                        db.commit()
+                            sql.execute(
+                                f'insert into "773249498104201228"(id, tags_name, tags_content, tags_date, usage_count)'
+                                f'values(?,?,?,?,?)', (ctx.author.id, name, image["link"], now, 0)),
+                            db.commit()
 
                         await ctx.send(f":white_check_mark: Created taq with the name `{name}`")
                     except ImgurClientError as e:
@@ -162,11 +163,29 @@ class core(commands.Cog):
                 await ctx.send(f"Tag named `{name}` already exists!")
             else:
                 if attachment and content is None:
-                    sql.execute(f'insert into "{ctx.guild.id}"(id, tags_name, tags_content, tags_date, usage_count)'
-                                f' values(?,?,?,?,?)',
-                                (ctx.author.id, name, ctx.message.attachments[0].url, now, 0))
-                    db.commit()
-                    await ctx.send(f":white_check_mark: Created tag with the name `{name}`")
+                    image_url = f"{ctx.message.attachments[0].url}"
+
+                    try:
+                        async with ctx.channel.typing():
+                            image = imgurclient.upload_from_url(image_url, config=None, anon=True)
+
+                            sql.execute(
+                                f'insert into "{ctx.guild.id}"(id, tags_name, tags_content, tags_date, usage_count)'
+                                f'values(?,?,?,?,?)', (ctx.author.id, name, image["link"], now, 0)),
+                            db.commit()
+
+                        await ctx.send(f":white_check_mark: Created tag with the name `{name}`")
+                    except ImgurClientError as e:
+                        channel = self.client.get_channel(713675042143076356)
+                        await channel.send(f"IMGUR API BRUTAL ERROR\n"
+                                           f"```{e.error_message} / {e.status_code}```\n"
+                                           f"<@444550944110149633>")
+                        sql.execute(
+                            f'insert into "{ctx.guild.id}"(id, tags_name, tags_content, tags_date, usage_count)'
+                            f'values(?,?,?,?,?)', (ctx.author.id, name, ctx.message.attachments[0].url, now, 0)),
+                        db.commit()
+
+                        await ctx.send(f":white_check_mark: Created tag with the name `{name}`")
                 else:
                     if content is None:
                         embed = discord.Embed(
@@ -638,7 +657,7 @@ class core(commands.Cog):
     @commands.command()
     async def sex(self, ctx):
         if ctx.author.id in self.client.admin_ids:
-            sql.execute(f'ALTER TABLE "773249498104201228" ADD COLUMN "usage_count"')
+            sql.execute(f'ALTER TABLE "776135101196009492" ADD COLUMN "imgur_id"')
             await ctx.send("done :flushed:")
         else:
             return
