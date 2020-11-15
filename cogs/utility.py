@@ -121,11 +121,11 @@ class utility(commands.Cog):
 
                 embed.add_field(name="‎", value="**OS**", inline=False)
                 embed.add_field(name="System", value=platform.system())
-                if len(platform.release()) is not 0:
+                if len(platform.release()) != 0:
                     embed.add_field(name="Release", value=platform.release())
                 else:
                     embed.add_field(name="Release", value="???")
-                if len(platform.version()) is not 0:
+                if len(platform.version()) != 0:
                     embed.add_field(name="Version", value=platform.version())
                 else:
                     embed.add_field(name="Release", value="???")
