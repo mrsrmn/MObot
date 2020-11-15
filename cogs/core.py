@@ -660,7 +660,7 @@ class core(commands.Cog):
             embed.add_field(name="Uptime", value=time_utils.get_bot_uptime(start_time))
             await ctx.send(embed=embed)
 
-    @commands.command()
+    @commands.command(hidden=True)
     async def sex(self, ctx):
         if ctx.author.id in self.client.admin_ids:
             sql.execute(f'ALTER TABLE "776135101196009492" ADD COLUMN "imgur_id"')

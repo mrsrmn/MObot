@@ -63,8 +63,8 @@ class utility(commands.Cog):
                                     "03/c32e9d106e4204ca6e68f2ec5b959c32.webp?size=1024")
             await ctx.send(embed=embed)
 
-    @commands.command(aliases=["ping"])
-    async def pinq(self, ctx):
+    @commands.command(aliases=["pinq"])
+    async def ping(self, ctx):
         await ctx.send(f"**{round(self.client.latency * 1000)}ms**")
 
     @commands.command(hidden=True)
@@ -80,7 +80,7 @@ class utility(commands.Cog):
                     await ctx.send("done :flushed:")
                 except Exception as e:
                     await ctx.send(repr(e))
-            elif args[0] == "server-count":
+            elif args[0] == "server-count" or args[0] == "servers":
                 await ctx.send(len(self.client.guilds))
             elif args[0] == "fuckoff" or args[0] == "die":
                 sad = ["goodbye cruel world :pensive: :v:", "why you do this to me :sob:", "bro...",
@@ -131,6 +131,13 @@ class utility(commands.Cog):
                     embed.add_field(name="Release", value="???")
 
                 await ctx.send(embed=embed)
+            else:
+                await ctx.send("sudo command not found :flushed:\n "
+                               "\nthis is the list of the sudo commands:\n"
+                               "reload - reloads the cogs\n"
+                               "fuckoff / die - shuts the bot down\n"
+                               "servers - gives the server count\n"
+                               "system - gives system info")
         else:
             return
 
