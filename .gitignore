@@ -8,14 +8,6 @@
 
 LICENSE
 .env
-.idea
-.idea/inspectionProfiles/profiles_settings.xml
-.idea/inspectionProfiles/Project_Default.xml
-.idea/discord.xml
-.idea/misc.xml
-.idea/mobot.iml
-.idea/modules.xml
-.idea/sqldialects.xml
-.idea/vcs.xml
+.idea/
 __pycache__/
 tags.db
