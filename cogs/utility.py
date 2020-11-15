@@ -2,6 +2,9 @@ import discord
 from discord.ext import commands
 import os
 import random
+import psutil
+from hurry.filesize import size
+import platform
 
 
 class utility(commands.Cog):
@@ -86,6 +89,48 @@ class utility(commands.Cog):
                 exit()
             elif args[0] == "h":
                 await ctx.send("hhhhhhhhhhhhh")
+            elif args[0] == "system":
+                embed = discord.Embed(
+                    title="Bot System Information",
+                    color=discord.Colour.purple()
+                )
+
+                embed.add_field(name="‎", value="**CPU**", inline=False)
+                embed.add_field(name="CPU Usage", value=str(psutil.cpu_percent()) + "%")
+                embed.add_field(name="Logical CPU Count", value=psutil.cpu_count())
+
+                mem = psutil.virtual_memory()
+                embed.add_field(name="‎", value="**Memory**", inline=False)
+                embed.add_field(name="Total Memory", value=size(mem.total) + "B")
+                embed.add_field(name="Available Memory", value=size(mem.available) + "B")
+                embed.add_field(name="Memory Usage", value=str(mem.percent) + "%")
+
+                disk = psutil.disk_usage("/")
+                embed.add_field(name="‎", value="**Disk**", inline=False)
+                embed.add_field(name="Total Space", value=size(disk.total) + "B")
+                embed.add_field(name="Used Space", value=size(disk.used) + "B")
+                embed.add_field(name="Free Space", value=size(disk.free) + "B")
+                embed.add_field(name="Disk Usage", value=str(disk.percent) + "%")
+
+                net = psutil.net_io_counters()
+                embed.add_field(name="‎", value="**Network**", inline=False)
+                embed.add_field(name="Packets Sent", value=net.packets_sent)
+                embed.add_field(name="Packets Received", value=net.packets_recv)
+                embed.add_field(name="Bytes Sent", value=size(net.bytes_sent) + "B")
+                embed.add_field(name="Bytes Received", value=size(net.bytes_recv) + "B")
+
+                embed.add_field(name="‎", value="**OS**", inline=False)
+                embed.add_field(name="System", value=platform.system())
+                if len(platform.release()) is not 0:
+                    embed.add_field(name="Release", value=platform.release())
+                else:
+                    embed.add_field(name="Release", value="???")
+                if len(platform.version()) is not 0:
+                    embed.add_field(name="Version", value=platform.version())
+                else:
+                    embed.add_field(name="Release", value="???")
+
+                await ctx.send(embed=embed)
         else:
             return
 

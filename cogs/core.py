@@ -23,7 +23,7 @@ imgurclient = ImgurClient(client_id, client_secret)
 start_time = datetime.datetime.utcnow()
 
 
-x = 1
+x = 0
 if x == 0:
     DIR = os.path.dirname(__file__)
     db = sqlite3.connect(os.path.join(DIR, "C:/Users/emirs/PycharmProjects/MObot/tags.db"))
