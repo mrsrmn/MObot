@@ -131,6 +131,13 @@ class utility(commands.Cog):
                     embed.add_field(name="Release", value="???")
 
                 await ctx.send(embed=embed)
+            elif args[0] == "help":
+                await ctx.send("\nthis is the list of the sudo commands:\n"
+                               "reload - reloads the cogs\n"
+                               "fuckoff / die - shuts the bot down\n"
+                               "servers - gives the server count\n"
+                               "system - gives system info")
+
             else:
                 await ctx.send("sudo command not found :flushed:\n "
                                "\nthis is the list of the sudo commands:\n"
