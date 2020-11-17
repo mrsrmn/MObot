@@ -28,11 +28,17 @@ if x == 0:
     DIR = os.path.dirname(__file__)
     db = sqlite3.connect(os.path.join(DIR, "C:/Users/emirs/PycharmProjects/MObot/tags.db"))
     sql = db.cursor()
+
+    dbprefix = sqlite3.connect(os.path.join(DIR, "C:/Users/emirs/PycharmProjects/MObot/prefixes.db"))
+    sqlprefix = dbprefix.cursor()
 elif x == 1:
     print("# VPS MODE")
     DIR = os.path.dirname(__file__)
     db = sqlite3.connect(os.path.join(DIR, "/root/mobot/tags.db"))
     sql = db.cursor()
+
+    dbprefix = sqlite3.connect(os.path.join(DIR, "/root/mobot/prefixes.db"))
+    sqlprefix = dbprefix.cursor()
 else:
     sql = None
 
@@ -93,6 +99,10 @@ class core(commands.Cog):
         sql.execute(f'create table if not exists "{guild.id}"("id" integer not null,'
                     '"tags_name" text not null, "tags_content" text not null, "tags_date" integer not null,'
                     ' "usage_count" integer not null')
+
+        sqlprefix.execute(f'create table if not exists "{guild.id}"("prefix" text not null )')
+        sqlprefix.execute(f'UPDATE "{guild.id}" set prefix = "h." ')
+        dbprefix.commit()
 
     @commands.command(aliases=["add", "c"])
     async def create(self, ctx, name, *, content=None):
@@ -667,6 +677,13 @@ class core(commands.Cog):
             await ctx.send("done :flushed:")
         else:
             return
+
+    @commands.command()
+    async def prefix(self, ctx, args):
+        sqlprefix.execute(f'create table if not exists "{ctx.guild.id}"("prefix" text)')
+
+        sqlprefix.execute(f'UPDATE "{ctx.guild.id}" set prefix = "{args}" ')
+        dbprefix.commit()
 
 
 def setup(client):
