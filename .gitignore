@@ -11,3 +11,4 @@ LICENSE
 .idea/
 __pycache__/
 tags.db
+prefixes.db
