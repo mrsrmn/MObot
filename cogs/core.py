@@ -671,19 +671,26 @@ class core(commands.Cog):
             await ctx.send(embed=embed)
 
     @commands.command(hidden=True)
-    async def sex(self, ctx):
+    async def addthisshit(self, ctx):
         if ctx.author.id in self.client.admin_ids:
-            sql.execute(f'ALTER TABLE "776135101196009492" ADD COLUMN "imgur_id"')
-            await ctx.send("done :flushed:")
+            sqlprefix.execute(f'create table if not exists "{ctx.guild.id}"("prefix" text not null )')
+            sqlprefix.execute(f'UPDATE "{ctx.guild.id}" set prefix = h. ')
+            dbprefix.commit()
         else:
             return
 
     @commands.command()
     async def prefix(self, ctx, args):
-        sqlprefix.execute(f'create table if not exists "{ctx.guild.id}"("prefix" text)')
+        sqlprefix.execute(f'select prefix from "{ctx.guild.id}"')
+        does_exist = sqlprefix.fetchone()
+        print(does_exist)
 
-        sqlprefix.execute(f'UPDATE "{ctx.guild.id}" set prefix = "{args}" ')
-        dbprefix.commit()
+        if does_exist is not None:
+            sqlprefix.execute(f'UPDATE "{ctx.guild.id}" set prefix = "{args}" ')
+            dbprefix.commit()
+        elif does_exist is None:
+            sqlprefix.execute(f'insert into "{ctx.guild.id}"(prefix) values(?)', args),
+            dbprefix.commit()
 
 
 def setup(client):
