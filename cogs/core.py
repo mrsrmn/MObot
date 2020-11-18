@@ -679,19 +679,6 @@ class core(commands.Cog):
         else:
             return
 
-    @commands.command()
-    async def prefix(self, ctx, args):
-        sqlprefix.execute(f'select prefix from "{ctx.guild.id}"')
-        does_exist = sqlprefix.fetchone()
-        print(does_exist)
-
-        if does_exist is not None:
-            sqlprefix.execute(f'UPDATE "{ctx.guild.id}" set prefix = "{args}" ')
-            dbprefix.commit()
-        elif does_exist is None:
-            sqlprefix.execute(f'insert into "{ctx.guild.id}"(prefix) values(?)', args),
-            dbprefix.commit()
-
 
 def setup(client):
     client.add_cog(core(client))
