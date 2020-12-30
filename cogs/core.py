@@ -228,20 +228,20 @@ class core(commands.Cog):
                 embed.set_footer(text=f"MissingRequiredArgument | Occurred in: {ctx.command}")
                 await ctx.send(embed=embed)
             else:
+                sql.execute(f'SELECT usage_count FROM "773249498104201228" WHERE tags_name= "{tag}"')
+                finalf = sql.fetchone()
+                finaluc = int(finalf[0]) + 1
+
                 sql.execute(f'SELECT tags_content FROM "773249498104201228" WHERE tags_name= "{tag}"')
                 final = sql.fetchone()
 
                 if final:
-                    sql.execute(f'SELECT usage_count FROM "773249498104201228" WHERE tags_name= "{tag}"')
-                    finalf = sql.fetchone()
-                    finaluc = int(finalf[0]) + 1
-
                     sql.execute(
                         f'UPDATE "773249498104201228" set usage_count = "{finaluc}" '
                         f'WHERE tags_name = "{tag}"')
                     await ctx.send(final[0])
                     db.commit()
-                else:
+                elif final is None and finalf and None:
                     await ctx.send(f"Tag named `{tag}` doesn't exist!")
         else:
             if tag is None:
@@ -254,21 +254,21 @@ class core(commands.Cog):
                 embed.set_footer(text=f"MissingRequiredArgument | Occurred in: {ctx.command}")
                 await ctx.send(embed=embed)
             else:
+                sql.execute(f'SELECT usage_count FROM "{ctx.guild.id}" WHERE tags_name= "{tag}"')
+                finalf = sql.fetchone()
+                finaluc = finalf[0] + 1
+                finalup = int(finaluc)
+
                 sql.execute(f'SELECT tags_content FROM "{ctx.guild.id}" WHERE tags_name= "{tag}"')
                 final = sql.fetchone()
 
                 if final:
-                    sql.execute(f'SELECT usage_count FROM "{ctx.guild.id}" WHERE tags_name= "{tag}"')
-                    finalf = sql.fetchone()
-                    finaluc = finalf[0] + 1
-                    finalup = int(finaluc)
-
                     sql.execute(
                         f'UPDATE "{ctx.guild.id}" set usage_count = "{finalup}" '
                         f'WHERE tags_name = "{tag}"')
                     await ctx.send(final[0])
                     db.commit()
-                else:
+                elif final is None:
                     await ctx.send(f"Tag named `{tag}` doesn't exist!")
 
     @commands.has_permissions(manage_messages=True)
