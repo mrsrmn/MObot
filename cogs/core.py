@@ -23,22 +23,16 @@ imgurclient = ImgurClient(client_id, client_secret)
 start_time = datetime.datetime.utcnow()
 
 
-x = 0
+x = 1
 if x == 0:
     DIR = os.path.dirname(__file__)
     db = sqlite3.connect(os.path.join(DIR, "C:/Users/emirs/PycharmProjects/MObot/tags.db"))
     sql = db.cursor()
-
-    dbprefix = sqlite3.connect(os.path.join(DIR, "C:/Users/emirs/PycharmProjects/MObot/prefixes.db"))
-    sqlprefix = dbprefix.cursor()
 elif x == 1:
     print("# VPS MODE")
     DIR = os.path.dirname(__file__)
     db = sqlite3.connect(os.path.join(DIR, "/root/mobot/tags.db"))
     sql = db.cursor()
-
-    dbprefix = sqlite3.connect(os.path.join(DIR, "/root/mobot/prefixes.db"))
-    sqlprefix = dbprefix.cursor()
 else:
     sql = None
 
@@ -100,10 +94,6 @@ class core(commands.Cog):
                     '"tags_name" text not null, "tags_content" text not null, "tags_date" integer not null,'
                     ' "usage_count" integer not null')
 
-        sqlprefix.execute(f'create table if not exists "{guild.id}"("prefix" text not null )')
-        sqlprefix.execute(f'UPDATE "{guild.id}" set prefix = "h." ')
-        dbprefix.commit()
-
     @commands.command(aliases=["add", "c"])
     async def create(self, ctx, name, *, content=None):
         if ctx.guild.id in self.client.epic_servers:
@@ -115,7 +105,7 @@ class core(commands.Cog):
             does_exist = sql.fetchone()
 
             if does_exist is not None:
-                await ctx.send(f"Tag named `{name}` already exists!")
+                await ctx.send(f"Taq named `{name}` already exists!")
             else:
                 if attachment and content is None:
                     image_url = f"{ctx.message.attachments[0].url}"
@@ -129,7 +119,7 @@ class core(commands.Cog):
                                 f'values(?,?,?,?,?)', (ctx.author.id, name, image["link"], now, 0)),
                             db.commit()
 
-                        await ctx.send(f":white_check_mark: Created tag with the name `{name}`")
+                        await ctx.send(f":white_check_mark: Created taq with the name `{name}`")
                     except ImgurClientError as e:
                         channel = self.client.get_channel(713675042143076356)
                         await channel.send(f"IMGUR API BRUTAL ERROR\n"
@@ -140,7 +130,7 @@ class core(commands.Cog):
                             f'values(?,?,?,?,?)', (ctx.author.id, name, ctx.message.attachments[0].url, now, 0)),
                         db.commit()
 
-                        await ctx.send(f":white_check_mark: Created tag with the name `{name}`")
+                        await ctx.send(f":white_check_mark: Created taq with the name `{name}`")
                 else:
                     if content is None:
                         embed = discord.Embed(
@@ -156,7 +146,7 @@ class core(commands.Cog):
                             f'insert into "773249498104201228"(id, tags_name, tags_content, tags_date, usage_count)'
                             f' values(?,?,?,?,?)', (ctx.author.id, name, content, now, 0))
                         db.commit()
-                        await ctx.send(f":white_check_mark: Created Tag with the name `{name}`")
+                        await ctx.send(f":white_check_mark: Created taq with the name `{name}`")
         else:
             attachment = ctx.message.attachments
             compensation = datetime.timedelta(hours=9)
@@ -215,7 +205,7 @@ class core(commands.Cog):
                         await ctx.send(f":white_check_mark: Created tag with the name `{name}`")
 
     @commands.cooldown(2, 5, commands.BucketType.member)
-    @commands.command(aliases=["t", "Tag"])
+    @commands.command(aliases=["t", "taq"])
     async def tag(self, ctx, tag=None):
         if ctx.guild.id in self.client.epic_servers:
             if tag is None:
@@ -228,20 +218,20 @@ class core(commands.Cog):
                 embed.set_footer(text=f"MissingRequiredArgument | Occurred in: {ctx.command}")
                 await ctx.send(embed=embed)
             else:
-                sql.execute(f'SELECT usage_count FROM "773249498104201228" WHERE tags_name= "{tag}"')
-                finalf = sql.fetchone()
-                finaluc = int(finalf[0]) + 1
-
                 sql.execute(f'SELECT tags_content FROM "773249498104201228" WHERE tags_name= "{tag}"')
                 final = sql.fetchone()
 
                 if final:
+                    sql.execute(f'SELECT usage_count FROM "773249498104201228" WHERE tags_name= "{tag}"')
+                    finalf = sql.fetchone()
+                    finaluc = int(finalf[0]) + 1
+
                     sql.execute(
                         f'UPDATE "773249498104201228" set usage_count = "{finaluc}" '
                         f'WHERE tags_name = "{tag}"')
                     await ctx.send(final[0])
                     db.commit()
-                elif final is None and finalf and None:
+                else:
                     await ctx.send(f"Tag named `{tag}` doesn't exist!")
         else:
             if tag is None:
@@ -254,21 +244,21 @@ class core(commands.Cog):
                 embed.set_footer(text=f"MissingRequiredArgument | Occurred in: {ctx.command}")
                 await ctx.send(embed=embed)
             else:
-                sql.execute(f'SELECT usage_count FROM "{ctx.guild.id}" WHERE tags_name= "{tag}"')
-                finalf = sql.fetchone()
-                finaluc = finalf[0] + 1
-                finalup = int(finaluc)
-
                 sql.execute(f'SELECT tags_content FROM "{ctx.guild.id}" WHERE tags_name= "{tag}"')
                 final = sql.fetchone()
 
                 if final:
+                    sql.execute(f'SELECT usage_count FROM "{ctx.guild.id}" WHERE tags_name= "{tag}"')
+                    finalf = sql.fetchone()
+                    finaluc = finalf[0] + 1
+                    finalup = int(finaluc)
+
                     sql.execute(
                         f'UPDATE "{ctx.guild.id}" set usage_count = "{finalup}" '
                         f'WHERE tags_name = "{tag}"')
                     await ctx.send(final[0])
                     db.commit()
-                elif final is None:
+                else:
                     await ctx.send(f"Tag named `{tag}` doesn't exist!")
 
     @commands.has_permissions(manage_messages=True)
@@ -286,11 +276,11 @@ class core(commands.Cog):
                 if id1[0] == user or ctx.author.id in self.client.admin_ids:
                     sql.execute(f'DELETE from "773249498104201228" where tags_name = "{tag}"')
                     db.commit()
-                    await ctx.send(f"Tag named `{tag}` deleted successfully")
+                    await ctx.send(f"Taq named `{tag}` deleted successfully")
                 else:
-                    await ctx.send(":x: You can't delete that Tag!")
+                    await ctx.send(":x: You can't delete that taq!")
             else:
-                await ctx.send(f"Tag named `{tag}` doesn't exist!")
+                await ctx.send(f"Taq named `{tag}` doesn't exist!")
         else:
             user = ctx.author.id
             sql.execute(f'SELECT tags_content FROM "{ctx.guild.id}" WHERE tags_name= "{tag}"')
@@ -309,7 +299,7 @@ class core(commands.Cog):
                                    " of this server, please enter the support server and create ticket"
                                    " so we can whitelist you about the tag deletement\n https://discord.gg/6PX24ZPnDt")
             else:
-                await ctx.send(f"Tag named `{tag}` doesn't exist!")
+                await ctx.send(f"Taq named `{tag}` doesn't exist!")
 
     @commands.command(aliases=["e"])
     async def edit(self, ctx, thing, tag, *, value=None):
@@ -368,7 +358,7 @@ class core(commands.Cog):
                         await ctx.send(":x: That is not the correct formatting of the"
                                        " command! Do `h.help` for detailed help of the command.")
                 else:
-                    await ctx.send(":x: You can't edit that Tag!")
+                    await ctx.send(":x: You can't edit that taq!")
             else:
                 await ctx.send(f"Tag named `{tag}` doesn't exist!")
         else:
@@ -448,19 +438,19 @@ class core(commands.Cog):
 
             if h == "]":
                 embed = discord.Embed(
-                    title="Tag List",
+                    title="Taq List",
                     colour=discord.Colour.purple()
                 )
-                embed.add_field(name="**Tags:**", value="You don't own any lol")
-                embed.set_footer(text=f"Tag Count: {finalc}")
+                embed.add_field(name="**Taqs:**", value="You don't own any lol")
+                embed.set_footer(text=f"Taq Count: {finalc}")
                 await ctx.send(embed=embed)
             else:
                 embed = discord.Embed(
-                    title="Tag List",
+                    title="Taq List",
                     colour=discord.Colour.purple()
                 )
-                embed.add_field(name="**Tags:**", value=h)
-                embed.set_footer(text=f"Tag Count: {finalc}")
+                embed.add_field(name="**Taqs:**", value=h)
+                embed.set_footer(text=f"Taq Count: {finalc}")
                 await ctx.send(embed=embed)
         else:
             user = ctx.author.id
@@ -484,7 +474,7 @@ class core(commands.Cog):
                 await ctx.send(embed=embed)
             else:
                 embed = discord.Embed(
-                    title="Tag List",
+                    title="Taq List",
                     colour=discord.Colour.purple()
                 )
                 embed.add_field(name="**Tags:**", value=h)
@@ -506,19 +496,19 @@ class core(commands.Cog):
 
             if h == "]":
                 embed = discord.Embed(
-                    title="Tag List",
+                    title="Taq List",
                     colour=discord.Colour.purple()
                 )
-                embed.add_field(name="**Tags:**", value="there isnt any lol")
-                embed.set_footer(text=f"Tag Count: {finalcount}")
+                embed.add_field(name="**Taqs:**", value="there isnt any lol")
+                embed.set_footer(text=f"Taq Count: {finalcount}")
                 await ctx.send(embed=embed)
             else:
                 embed = discord.Embed(
-                    title="Tag List",
+                    title="Taq List",
                     colour=discord.Colour.purple()
                 )
-                embed.add_field(name="**Tags:**", value=h)
-                embed.set_footer(text=f"Tag Count: {finalcount}")
+                embed.add_field(name="**Taqs:**", value=h)
+                embed.set_footer(text=f"Taq Count: {finalcount}")
                 await ctx.send(embed=embed)
         else:
             sql.execute(f'SELECT tags_name FROM "{ctx.guild.id}"')
@@ -533,19 +523,19 @@ class core(commands.Cog):
 
             if h == "]":
                 embed = discord.Embed(
-                    title="Tag List",
+                    title="Taq List",
                     colour=discord.Colour.purple()
                 )
-                embed.add_field(name="**Tags:**", value="there isnt any lol")
-                embed.set_footer(text=f"Tag Count: {finalcount}")
+                embed.add_field(name="**Taqs:**", value="there isnt any lol")
+                embed.set_footer(text=f"Taq Count: {finalcount}")
                 await ctx.send(embed=embed)
             else:
                 embed = discord.Embed(
-                    title="Tag List",
+                    title="Taq List",
                     colour=discord.Colour.purple()
                 )
-                embed.add_field(name="**Tags:**", value=h)
-                embed.set_footer(text=f"Tag Count: {finalcount}")
+                embed.add_field(name="**Taqs:**", value=h)
+                embed.set_footer(text=f"Taq Count: {finalcount}")
                 await ctx.send(embed=embed)
 
     @commands.cooldown(2, 5, commands.BucketType.member)
@@ -566,7 +556,7 @@ class core(commands.Cog):
             owner = sql.fetchone()
             user = self.client.get_user(owner[0])
 
-            await ctx.send(f"**Tags Name:** {tagname[0]}\n**Tags Owner:** {user}\n{final[0]}")
+            await ctx.send(f"**Taqs Name:** {tagname[0]}\n**Taqs Owner:** {user}\n{final[0]}")
         else:
             sql.execute(f'SELECT tags_name FROM "{ctx.guild.id}"')
             name = sql.fetchall()
@@ -585,23 +575,23 @@ class core(commands.Cog):
             await ctx.send(f"**Tags Name:** {tagname[0]}\n**Tags Owner:** {user}\n{final[0]}")
 
     @commands.command(aliases=["i"])
-    async def info(self, ctx, Tag):
+    async def info(self, ctx, taq):
         if ctx.guild.id in self.client.epic_servers:
-            sql.execute(f'SELECT id FROM "773249498104201228" WHERE tags_name = "{Tag}"')
+            sql.execute(f'SELECT id FROM "773249498104201228" WHERE tags_name = "{taq}"')
             ownerid = sql.fetchone()
 
-            sql.execute(f'SELECT tags_date FROM "773249498104201228" WHERE tags_name = "{Tag}"')
+            sql.execute(f'SELECT tags_date FROM "773249498104201228" WHERE tags_name = "{taq}"')
             date = sql.fetchone()
 
-            sql.execute(f'SELECT tags_content FROM "773249498104201228" WHERE tags_name= "{Tag}"')
+            sql.execute(f'SELECT tags_content FROM "773249498104201228" WHERE tags_name= "{taq}"')
             content = sql.fetchone()
 
-            sql.execute(f'SELECT usage_count FROM "773249498104201228" WHERE tags_name= "{Tag}"')
+            sql.execute(f'SELECT usage_count FROM "773249498104201228" WHERE tags_name= "{taq}"')
             count = sql.fetchone()
 
             if content:
                 embed = discord.Embed(
-                    title=f"Tag Info of {Tag}",
+                    title=f"Taq Info of {taq}",
                     colour=discord.Colour.purple()
                 )
                 embed.add_field(name="Owner:", value=f"<@{ownerid[0]}>")
@@ -609,23 +599,23 @@ class core(commands.Cog):
                 embed.add_field(name="Times it got used:", value=count[0])
                 await ctx.send(embed=embed)
             else:
-                await ctx.send(":x: That Tag doesn't seem to exist!")
+                await ctx.send(":x: That taq doesn't seem to exist!")
         else:
-            sql.execute(f'SELECT id FROM "{ctx.guild.id}" WHERE tags_name = "{Tag}"')
+            sql.execute(f'SELECT id FROM "{ctx.guild.id}" WHERE tags_name = "{taq}"')
             ownerid = sql.fetchone()
 
-            sql.execute(f'SELECT tags_date FROM "{ctx.guild.id}" WHERE tags_name = "{Tag}"')
+            sql.execute(f'SELECT tags_date FROM "{ctx.guild.id}" WHERE tags_name = "{taq}"')
             date = sql.fetchone()
 
-            sql.execute(f'SELECT tags_content FROM "{ctx.guild.id}" WHERE tags_name= "{Tag}"')
+            sql.execute(f'SELECT tags_content FROM "{ctx.guild.id}" WHERE tags_name= "{taq}"')
             content = sql.fetchone()
 
-            sql.execute(f'SELECT usage_count FROM "{ctx.guild.id}" WHERE tags_name= "{Tag}"')
+            sql.execute(f'SELECT usage_count FROM "{ctx.guild.id}" WHERE tags_name= "{taq}"')
             count = sql.fetchone()
 
             if content:
                 embed = discord.Embed(
-                    title=f"Tag Info of {Tag}",
+                    title=f"Tag Info of {taq}",
                     colour=discord.Colour.purple()
                 )
                 embed.add_field(name="Owner:", value=f"<@{ownerid[0]}>")
@@ -652,7 +642,7 @@ class core(commands.Cog):
             embed.add_field(name="Pinq:", value=f"{round(self.client.latency * 1000)}ms")
             embed.add_field(name="Command Count:", value=f"{len(self.client.commands)}")
             embed.add_field(name="Made by:", value=f"{user} :sunglasses:")
-            embed.add_field(name="Tag Count:", value=f"{finalcount}")
+            embed.add_field(name="Taq Count:", value=f"{finalcount}")
             embed.add_field(name="Uptime", value=time_utils.get_bot_uptime(start_time))
             await ctx.send(embed=embed)
         else:
@@ -671,26 +661,12 @@ class core(commands.Cog):
             await ctx.send(embed=embed)
 
     @commands.command(hidden=True)
-    async def addthisshit(self, ctx):
+    async def sex(self, ctx):
         if ctx.author.id in self.client.admin_ids:
-            sqlprefix.execute(f'create table if not exists "{ctx.guild.id}"("prefix" text not null )')
-            sqlprefix.execute(f'UPDATE "{ctx.guild.id}" set prefix = h. ')
-            dbprefix.commit()
+            sql.execute(f'ALTER TABLE "776135101196009492" ADD COLUMN "imgur_id"')
+            await ctx.send("done :flushed:")
         else:
             return
-
-    @commands.command()
-    async def prefix(self, ctx, args):
-        sqlprefix.execute(f'select prefix from "{ctx.guild.id}"')
-        does_exist = sqlprefix.fetchone()
-        print(does_exist)
-
-        if does_exist is not None:
-            sqlprefix.execute(f'UPDATE "{ctx.guild.id}" set prefix = "{args}" ')
-            dbprefix.commit()
-        elif does_exist is None:
-            sqlprefix.execute(f'insert into "{ctx.guild.id}"(prefix) values(?)', args),
-            dbprefix.commit()
 
 
 def setup(client):
